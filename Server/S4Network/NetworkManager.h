@@ -2,7 +2,7 @@
 
 #pragma warning(push)
 #pragma warning(disable: 4005)
-#include <boost/asio.hpp>
+// #include <boost/asio.hpp>
 #pragma warning(pop)
 
 namespace S4Network
@@ -16,8 +16,8 @@ namespace S4Network
 		void	Init(int Port);
 
 	private:
-		std::shared_ptr<boost::asio::ip::tcp::acceptor>		mAcceptor;
-		std::shared_ptr<boost::asio::io_service>			mIOService;
+		// std::shared_ptr<boost::asio::ip::tcp::acceptor>		mAcceptor;
+		// std::shared_ptr<boost::asio::io_service>			mIOService;
 
 		bool	mIsAccepting = false;
 		int		mSeqNumber = 0;

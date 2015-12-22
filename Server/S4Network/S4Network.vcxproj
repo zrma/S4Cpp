@@ -150,43 +150,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\S4Server\packages\boost_program_options-vc140.1.59.0.0\build\native\boost_program_options-vc140.targets" Condition="Exists('..\S4Server\packages\boost_program_options-vc140.1.59.0.0\build\native\boost_program_options-vc140.targets')" />
-    <Import Project="..\S4Server\packages\boost.1.60.0.0\build\native\boost.targets" Condition="Exists('..\S4Server\packages\boost.1.60.0.0\build\native\boost.targets')" />
-    <Import Project="..\S4Server\packages\boost_random-vc140.1.60.0.0\build\native\boost_random-vc140.targets" Condition="Exists('..\S4Server\packages\boost_random-vc140.1.60.0.0\build\native\boost_random-vc140.targets')" />
-    <Import Project="..\S4Server\packages\boost_regex-vc140.1.60.0.0\build\native\boost_regex-vc140.targets" Condition="Exists('..\S4Server\packages\boost_regex-vc140.1.60.0.0\build\native\boost_regex-vc140.targets')" />
-    <Import Project="..\S4Server\packages\boost_serialization-vc140.1.60.0.0\build\native\boost_serialization-vc140.targets" Condition="Exists('..\S4Server\packages\boost_serialization-vc140.1.60.0.0\build\native\boost_serialization-vc140.targets')" />
-    <Import Project="..\S4Server\packages\boost_signals-vc140.1.60.0.0\build\native\boost_signals-vc140.targets" Condition="Exists('..\S4Server\packages\boost_signals-vc140.1.60.0.0\build\native\boost_signals-vc140.targets')" />
-    <Import Project="..\S4Server\packages\boost_system-vc140.1.60.0.0\build\native\boost_system-vc140.targets" Condition="Exists('..\S4Server\packages\boost_system-vc140.1.60.0.0\build\native\boost_system-vc140.targets')" />
-    <Import Project="..\S4Server\packages\boost_test_exec_monitor-vc140.1.60.0.0\build\native\boost_test_exec_monitor-vc140.targets" Condition="Exists('..\S4Server\packages\boost_test_exec_monitor-vc140.1.60.0.0\build\native\boost_test_exec_monitor-vc140.targets')" />
-    <Import Project="..\S4Server\packages\boost_thread-vc140.1.60.0.0\build\native\boost_thread-vc140.targets" Condition="Exists('..\S4Server\packages\boost_thread-vc140.1.60.0.0\build\native\boost_thread-vc140.targets')" />
-    <Import Project="..\S4Server\packages\boost_timer-vc140.1.60.0.0\build\native\boost_timer-vc140.targets" Condition="Exists('..\S4Server\packages\boost_timer-vc140.1.60.0.0\build\native\boost_timer-vc140.targets')" />
-    <Import Project="..\S4Server\packages\boost_unit_test_framework-vc140.1.60.0.0\build\native\boost_unit_test_framework-vc140.targets" Condition="Exists('..\S4Server\packages\boost_unit_test_framework-vc140.1.60.0.0\build\native\boost_unit_test_framework-vc140.targets')" />
-    <Import Project="..\S4Server\packages\boost_wave-vc140.1.60.0.0\build\native\boost_wave-vc140.targets" Condition="Exists('..\S4Server\packages\boost_wave-vc140.1.60.0.0\build\native\boost_wave-vc140.targets')" />
-    <Import Project="..\S4Server\packages\boost_wserialization-vc140.1.60.0.0\build\native\boost_wserialization-vc140.targets" Condition="Exists('..\S4Server\packages\boost_wserialization-vc140.1.60.0.0\build\native\boost_wserialization-vc140.targets')" />
-    <Import Project="..\S4Server\packages\boost-vc140.1.60.0.0\build\native\boost-vc140.targets" Condition="Exists('..\S4Server\packages\boost-vc140.1.60.0.0\build\native\boost-vc140.targets')" />
-  </ImportGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>이 프로젝트는 이 컴퓨터에 없는 NuGet 패키지를 참조합니다. 해당 패키지를 다운로드하려면 NuGet 패키지 복원을 사용하십시오. 자세한 내용은 http://go.microsoft.com/fwlink/?LinkID=322105를 참조하십시오. 누락된 파일은 {0}입니다.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\S4Server\packages\boost_program_options-vc140.1.59.0.0\build\native\boost_program_options-vc140.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\S4Server\packages\boost_program_options-vc140.1.59.0.0\build\native\boost_program_options-vc140.targets'))" />
-    <Error Condition="!Exists('..\S4Server\packages\boost.1.60.0.0\build\native\boost.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\S4Server\packages\boost.1.60.0.0\build\native\boost.targets'))" />
-    <Error Condition="!Exists('..\S4Server\packages\boost_random-vc140.1.60.0.0\build\native\boost_random-vc140.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\S4Server\packages\boost_random-vc140.1.60.0.0\build\native\boost_random-vc140.targets'))" />
-    <Error Condition="!Exists('..\S4Server\packages\boost_regex-vc140.1.60.0.0\build\native\boost_regex-vc140.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\S4Server\packages\boost_regex-vc140.1.60.0.0\build\native\boost_regex-vc140.targets'))" />
-    <Error Condition="!Exists('..\S4Server\packages\boost_serialization-vc140.1.60.0.0\build\native\boost_serialization-vc140.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\S4Server\packages\boost_serialization-vc140.1.60.0.0\build\native\boost_serialization-vc140.targets'))" />
-    <Error Condition="!Exists('..\S4Server\packages\boost_signals-vc140.1.60.0.0\build\native\boost_signals-vc140.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\S4Server\packages\boost_signals-vc140.1.60.0.0\build\native\boost_signals-vc140.targets'))" />
-    <Error Condition="!Exists('..\S4Server\packages\boost_system-vc140.1.60.0.0\build\native\boost_system-vc140.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\S4Server\packages\boost_system-vc140.1.60.0.0\build\native\boost_system-vc140.targets'))" />
-    <Error Condition="!Exists('..\S4Server\packages\boost_test_exec_monitor-vc140.1.60.0.0\build\native\boost_test_exec_monitor-vc140.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\S4Server\packages\boost_test_exec_monitor-vc140.1.60.0.0\build\native\boost_test_exec_monitor-vc140.targets'))" />
-    <Error Condition="!Exists('..\S4Server\packages\boost_thread-vc140.1.60.0.0\build\native\boost_thread-vc140.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\S4Server\packages\boost_thread-vc140.1.60.0.0\build\native\boost_thread-vc140.targets'))" />
-    <Error Condition="!Exists('..\S4Server\packages\boost_timer-vc140.1.60.0.0\build\native\boost_timer-vc140.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\S4Server\packages\boost_timer-vc140.1.60.0.0\build\native\boost_timer-vc140.targets'))" />
-    <Error Condition="!Exists('..\S4Server\packages\boost_unit_test_framework-vc140.1.60.0.0\build\native\boost_unit_test_framework-vc140.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\S4Server\packages\boost_unit_test_framework-vc140.1.60.0.0\build\native\boost_unit_test_framework-vc140.targets'))" />
-    <Error Condition="!Exists('..\S4Server\packages\boost_wave-vc140.1.60.0.0\build\native\boost_wave-vc140.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\S4Server\packages\boost_wave-vc140.1.60.0.0\build\native\boost_wave-vc140.targets'))" />
-    <Error Condition="!Exists('..\S4Server\packages\boost_wserialization-vc140.1.60.0.0\build\native\boost_wserialization-vc140.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\S4Server\packages\boost_wserialization-vc140.1.60.0.0\build\native\boost_wserialization-vc140.targets'))" />
-    <Error Condition="!Exists('..\S4Server\packages\boost-vc140.1.60.0.0\build\native\boost-vc140.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\S4Server\packages\boost-vc140.1.60.0.0\build\native\boost-vc140.targets'))" />
-  </Target>
+  <ImportGroup Label="ExtensionTargets" />
 </Project>
