@@ -15,7 +15,6 @@ namespace S4Network
 
 		void	Init(int Port);
 
-
 	private:
 		std::shared_ptr<boost::asio::ip::tcp::acceptor>		mAcceptor;
 		std::shared_ptr<boost::asio::io_service>			mIOService;
