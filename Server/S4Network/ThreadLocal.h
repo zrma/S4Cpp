@@ -1,6 +1,6 @@
 #pragma once
 
-#include <boost/thread/tss.hpp>
+#include <thread>
 
 namespace S4Network
 {
@@ -12,9 +12,7 @@ namespace S4Network
 		THREAD_WORLD
 	};
 
-	extern boost::thread_specific_ptr<int> LThreadType;
-	extern boost::thread_specific_ptr<int> LThreadId;
-	extern boost::thread_specific_ptr<int64_t> LTickCount;
-
-	extern void Init();
+	extern thread_local int LThreadType;
+	extern thread_local int LThreadId;
+	extern thread_local int LTickCount;
 }
