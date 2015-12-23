@@ -24,7 +24,7 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\S4Network\ThreadLocal.h">
+    <ClInclude Include="ThreadLocal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -32,7 +32,7 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\S4Network\ThreadLocal.cpp">
+    <ClCompile Include="ThreadLocal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

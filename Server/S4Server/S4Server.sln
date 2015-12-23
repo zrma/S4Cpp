@@ -14,7 +14,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "S4Network", "..\S4Network\S
 		{52673FD5-B489-4BD0-91E4-5BE99891AFE6} = {52673FD5-B489-4BD0-91E4-5BE99891AFE6}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "S4Thread", "S4Thread\S4Thread.vcxproj", "{52673FD5-B489-4BD0-91E4-5BE99891AFE6}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "S4Thread", "..\S4Thread\S4Thread.vcxproj", "{52673FD5-B489-4BD0-91E4-5BE99891AFE6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
