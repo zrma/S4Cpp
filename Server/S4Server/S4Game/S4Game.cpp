@@ -7,7 +7,7 @@
 
 #include <boost/log/trivial.hpp>
 
-#pragma comment(lib, "Thread.lib")
+#pragma comment(lib, "S4Thread.lib")
 #pragma comment(lib, "S4Network.lib")
 
 const int PORT_NUM = 35555;
