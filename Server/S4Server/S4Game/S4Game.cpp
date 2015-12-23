@@ -16,7 +16,7 @@ S4Network::NetworkManager GNetworkManager;
 
 int main()
 {
-	LThreadType = THREAD_TYPE::THREAD_MAIN;
+	S4Thread::LThreadType = S4Thread::THREAD_TYPE::THREAD_MAIN;
 
 	GNetworkManager.Init(PORT_NUM);
 	GNetworkManager.Run();
