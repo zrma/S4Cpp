@@ -1,8 +1,7 @@
 #include "stdafx.h"
 #include "ConcurrentJobManager.h"
 
-S4Thread::ConcurrentJobManager::ConcurrentJobManager(boost::asio::io_service& io_service, std::size_t size)
-	: m_io_service(io_service)
+S4Thread::ConcurrentJobManager::ConcurrentJobManager(std::size_t size)
 {
 	m_Work = std::make_shared<boost::asio::io_service::work>(m_io_service);
 
