@@ -7,6 +7,7 @@
 #include "NetworkManager.h"
 
 #include <boost/log/trivial.hpp>
+#include <mutex>
 
 #pragma comment(lib, "S4Thread.lib")
 #pragma comment(lib, "S4Network.lib")
@@ -24,28 +25,74 @@ int main()
 	GNetworkManager.Run();
 
 	// BOOST_LOG_TRIVIAL(info) << "네트워크 접속 종료";
+	
+	std::size_t total = 3000000000;
+	std::size_t count = 1000;
+	std::size_t token = total / count;
 
-	for (std::size_t i = 0; i < 10; ++i)
+	std::mutex mtx_lock;
+	std::size_t totalSum = 0;
+	std::size_t totalCount = 0;
+	std::size_t type = 0;
+
+	BOOST_LOG_TRIVIAL(info) << "Single Thread Start!";
+	
+	for (std::size_t i = 1; i <= total; ++i)
 	{
-		GJobManager.PostJob([]()
-		{
-			BOOST_LOG_TRIVIAL(info) << std::this_thread::get_id() << "스레드 진입!!!";
-			BOOST_LOG_TRIVIAL(info) << std::this_thread::get_id() << "스레드 탈출!!!";
-		});
+		totalSum += i;
 	}
 
-	boost::asio::strand job(GJobManager.GetHandler());
+	BOOST_LOG_TRIVIAL(info) << "Result : " << totalSum;
 
-	for (std::size_t i = 0; i < 10; ++i)
+	totalSum = 0;
+
+	HANDLE hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+
+	auto job = [&](std::size_t idx, std::size_t start, std::size_t end) -> std::size_t
 	{
-		GJobManager.PostJob(job.wrap([]()
+		std::size_t sum = 0;
+		for (std::size_t i = start; i <= end; ++i)
 		{
-			BOOST_LOG_TRIVIAL(info) << std::this_thread::get_id() << "스레드 진입!!!";
-			Sleep(3000);
-			BOOST_LOG_TRIVIAL(info) << std::this_thread::get_id() << "스레드 탈출!!!";
-		}));
-	}
+			sum += i;
+		}
 
+		BOOST_LOG_TRIVIAL(info) << idx << " : " << start << " to " << end << " = "<< sum;
+
+		std::lock_guard<std::mutex> guard(mtx_lock);
+		totalSum += sum;
+
+		if (++totalCount == count)
+		{
+			BOOST_LOG_TRIVIAL(info) << "Total : " << totalSum;
+			totalSum = 0;
+			totalCount = 0;
+
+			if (type++ == 0 )
+			{
+				BOOST_LOG_TRIVIAL(info) << "Multi Thread Start!";
+				SetEvent(hEvent);
+			}
+		}
+
+		return sum;
+	};
+
+	BOOST_LOG_TRIVIAL(info) << "Strand Start!";
+	
+	boost::asio::strand task(GJobManager.GetHandler());
+
+	for (std::size_t i = 0; i < count; ++i)
+	{
+		GJobManager.PostJob( task.wrap(std::bind(job, i, i * token + 1, (i + 1) * token)) );
+	}
+	
+	WaitForSingleObject(hEvent, 30000);
+
+	for (std::size_t i = 0; i < count; ++i)
+	{
+		GJobManager.PostJob(std::bind(job, i, i * token + 1, (i + 1) * token));
+	}
+		
 	getchar();
 	
     return 0;
