@@ -27,6 +27,9 @@ int main()
 {
 	/// for dump on crash
 	SetUnhandledExceptionFilter(ExceptionFilter);
+	
+	int div = 0;
+	int test = 4 / div;
 
 	S4Thread::LThreadType = S4Thread::THREAD_TYPE::THREAD_MAIN;
 
@@ -103,10 +106,7 @@ int main()
 		GJobManager.PostJob(std::bind(job, i, i * token + 1, (i + 1) * token));
 	}
 	*/
-
-	int div = 0;
-	int test = 4 / div;
-		
+	
 	getchar();
 	
     return 0;

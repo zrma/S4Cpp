@@ -23,7 +23,7 @@ void MakeDump(EXCEPTION_POINTERS* e)
 	StringCbPrintf(tszFileName,
 		_countof(tszFileName),
 		_T("%s_%4d%02d%02d_%02d%02d%02d.dmp"),
-		_T("EduServerDump"),
+		_T("ServerDump"),
 		stTime.wYear,
 		stTime.wMonth,
 		stTime.wDay,
