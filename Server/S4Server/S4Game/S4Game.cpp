@@ -2,15 +2,21 @@
 //
 
 #include "stdafx.h"
+
 #include "../../S4Thread/ThreadLocal.h"
 #include "../../S4Thread/ConcurrentJobManager.h"
 #include "../../S4Network/NetworkManager.h"
 
 #include <boost/log/trivial.hpp>
-#include <mutex>
+
+// #include <mutex>
+#include "../../S4Util/Exception.h"
 
 #pragma comment(lib, "S4Thread.lib")
 #pragma comment(lib, "S4Network.lib")
+
+#pragma comment(lib, "Dbghelp.lib")
+#pragma comment(lib, "S4Util.lib")
 
 const int PORT_NUM = 35555;
 
@@ -19,6 +25,9 @@ S4Thread::ConcurrentJobManager GJobManager(8);
 
 int main()
 {
+	/// for dump on crash
+	SetUnhandledExceptionFilter(ExceptionFilter);
+
 	S4Thread::LThreadType = S4Thread::THREAD_TYPE::THREAD_MAIN;
 
 	GNetworkManager.Init(PORT_NUM);
