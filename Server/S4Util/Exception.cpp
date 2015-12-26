@@ -1,17 +1,14 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "../S4Thread/ThreadLocal.h"
 #include "Exception.h"
 // #include "Log.h"
 #include <fstream>
 
-#pragma warning(push)
 #pragma warning(disable: 4091)
 #include <DbgHelp.h>
-#pragma warning(pop)
-
 #include <TlHelp32.h>
 #include <strsafe.h>
-// #include "StackWalker.h"
+#include "StackWalker.h"
 
 #define MAX_BUFF_SIZE 1024
 
@@ -77,7 +74,7 @@ LONG WINAPI ExceptionFilter(EXCEPTION_POINTERS* exceptionInfo)
 		{
 			do
 			{
-				/// ³» ÇÁ·Î¼¼½º ³»ÀÇ ½º·¹µåÁß ³ª ÀÚ½Å ½º·¹µå¸¸ »©°í ¸ØÃß°Ô..
+				/// ë‚´ í”„ë¡œì„¸ìŠ¤ ë‚´ì˜ ìŠ¤ë ˆë“œì¤‘ ë‚˜ ìì‹  ìŠ¤ë ˆë“œë§Œ ë¹¼ê³  ë©ˆì¶”ê²Œ..
 				if (te32.th32OwnerProcessID == myProcessId && te32.th32ThreadID != myThreadId)
 				{
 					HANDLE hThread = OpenThread(THREAD_ALL_ACCESS, FALSE, te32.th32ThreadID);
@@ -94,10 +91,10 @@ LONG WINAPI ExceptionFilter(EXCEPTION_POINTERS* exceptionInfo)
 		CloseHandle(hThreadSnap);
 	}
 
-/*
 	std::ofstream historyOut("EduServer_exception.txt", std::ofstream::out);
 
-	/// ÄİÈ÷½ºÅä¸® ³²±â°í
+	/*
+	/// ì½œíˆìŠ¤í† ë¦¬ ë‚¨ê¸°ê³ 
 	historyOut << "========== WorkerThread Call History ==========" << std::endl << std::endl;
 	for (int i = 0; i < MAX_WORKER_THREAD; ++i)
 	{
@@ -107,7 +104,7 @@ LONG WINAPI ExceptionFilter(EXCEPTION_POINTERS* exceptionInfo)
 		}
 	}
 
-	/// Äİ¼º´É ³²±â°í
+	/// ì½œì„±ëŠ¥ ë‚¨ê¸°ê³ 
 	historyOut << "========== WorkerThread Call Performance ==========" << std::endl << std::endl;
 	for (int i = 0; i < MAX_WORKER_THREAD; ++i)
 	{
@@ -116,28 +113,25 @@ LONG WINAPI ExceptionFilter(EXCEPTION_POINTERS* exceptionInfo)
 			GThreadCallElapsedRecord[i]->DumpOut(historyOut);
 		}
 	}
-
-	/// Äİ½ºÅÃµµ ³²±â°í
+	*/
+	/// ì½œìŠ¤íƒë„ ë‚¨ê¸°ê³ 
 	historyOut << "========== Exception Call Stack ==========" << std::endl << std::endl;
 	StackWalker stackWalker;
 	stackWalker.SetOutputStream(&historyOut);
 	stackWalker.ShowCallstack();
 
-	/// ÀÌº¥Æ® ·Î±× ³²±â°í
-	LoggerUtil::EventLogDumpOut(historyOut);
-
+	/// ì´ë²¤íŠ¸ ë¡œê·¸ ë‚¨ê¸°ê³ 
+	// LoggerUtil::EventLogDumpOut(historyOut);
+	
 	historyOut.flush();
 	historyOut.close();
-*/
-
-
-	/// ¸¶Áö¸·À¸·Î dump file ³²±âÀÚ.
+		
+	/// ë§ˆì§€ë§‰ìœ¼ë¡œ dump file ë‚¨ê¸°ì.
 	MakeDump(exceptionInfo);
 
 
 	ExitProcess(1);
-	/// ¿©±â¼­ ÂĞ
+	/// ì—¬ê¸°ì„œ ì«‘
 
 	return EXCEPTION_EXECUTE_HANDLER;
-
 }
