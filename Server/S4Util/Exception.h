@@ -1,14 +1,17 @@
 #pragma once
 
-LONG WINAPI ExceptionFilter(EXCEPTION_POINTERS* exceptionInfo);
-
-inline void CRASH_ASSERT(bool isOk)
+namespace S4Util
 {
-	if (isOk)
-	{
-		return;
-	}
+	LONG WINAPI ExceptionFilter(EXCEPTION_POINTERS* exceptionInfo);
 
-	int* crashVal = 0;
-	*crashVal = 0xDEADBEEF;
+	inline void CRASH_ASSERT(bool isOk)
+	{
+		if (isOk)
+		{
+			return;
+		}
+
+		int* crashVal = 0;
+		*crashVal = 0xDEADBEEF;
+	}
 }

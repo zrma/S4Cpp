@@ -25,7 +25,7 @@ S4Thread::ConcurrentJobManager GJobManager(8);
 int main()
 {
 	/// for dump on crash
-	SetUnhandledExceptionFilter(ExceptionFilter);
+	SetUnhandledExceptionFilter(S4Util::ExceptionFilter);
 	
 	S4Thread::LThreadType = S4Thread::THREAD_TYPE::THREAD_MAIN;
 
