@@ -2,9 +2,9 @@
 //
 
 #include "stdafx.h"
-#include "ThreadLocal.h"
-#include "ConcurrentJobManager.h"
-#include "NetworkManager.h"
+#include "../../S4Thread/ThreadLocal.h"
+#include "../../S4Thread/ConcurrentJobManager.h"
+#include "../../S4Network/NetworkManager.h"
 
 #include <boost/log/trivial.hpp>
 #include <mutex>
@@ -24,8 +24,9 @@ int main()
 	GNetworkManager.Init(PORT_NUM);
 	GNetworkManager.Run();
 
-	// BOOST_LOG_TRIVIAL(info) << "匙飘况农 立加 辆丰";
+	BOOST_LOG_TRIVIAL(info) << "匙飘况农 立加 辆丰";
 	
+	/*
 	std::size_t total = 3000000000;
 	std::size_t count = 1000;
 	std::size_t token = total / count;
@@ -92,6 +93,10 @@ int main()
 	{
 		GJobManager.PostJob(std::bind(job, i, i * token + 1, (i + 1) * token));
 	}
+	*/
+
+	int div = 0;
+	int test = 4 / div;
 		
 	getchar();
 	
