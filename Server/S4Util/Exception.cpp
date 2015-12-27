@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 #include "../S4Thread/ThreadLocal.h"
 #include "Exception.h"
-// #include "Log.h"
+#include "Log.h"
 #include <fstream>
 
 #pragma warning(disable: 4091)
@@ -123,7 +123,7 @@ namespace S4Util
 		stackWalker.ShowCallstack();
 
 		/// 이벤트 로그 남기고
-		// LoggerUtil::EventLogDumpOut(historyOut);
+		EventLogDumpOut(historyOut);
 
 		historyOut.flush();
 		historyOut.close();

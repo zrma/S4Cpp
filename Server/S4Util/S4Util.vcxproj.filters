@@ -12,6 +12,9 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="Log">
+      <UniqueIdentifier>{a0eed2c5-f7c0-4355-b9e8-9b6c993de2f4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -29,6 +32,9 @@
     <ClInclude Include="StackWalker.h">
       <Filter>Exception</Filter>
     </ClInclude>
+    <ClInclude Include="Log.h">
+      <Filter>Default</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Exception.cpp">
@@ -40,5 +46,6 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Default</Filter>
     </ClCompile>
+    <ClCompile Include="Log.cpp" />
   </ItemGroup>
 </Project>
