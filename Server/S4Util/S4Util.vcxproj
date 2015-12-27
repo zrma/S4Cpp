@@ -140,6 +140,7 @@
   <ItemGroup>
     <ClInclude Include="Exception.h" />
     <ClInclude Include="Log.h" />
+    <ClInclude Include="MemoryPool.h" />
     <ClInclude Include="StackWalker.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -147,6 +148,7 @@
   <ItemGroup>
     <ClCompile Include="Exception.cpp" />
     <ClCompile Include="Log.cpp" />
+    <ClCompile Include="MemoryPool.cpp" />
     <ClCompile Include="StackWalker.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
