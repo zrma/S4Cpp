@@ -19,7 +19,7 @@
 
 const int PORT_NUM = 35555;
 
-S4Network::NetworkManager GNetworkManager;
+S4Network::NetworkManager GNetworkManager(PORT_NUM);
 S4Thread::ConcurrentJobManager GJobManager(8);
 
 int main()
@@ -29,7 +29,6 @@ int main()
 	
 	S4Thread::LThreadType = S4Thread::THREAD_TYPE::THREAD_MAIN;
 
-	GNetworkManager.Init(PORT_NUM);
 	GNetworkManager.Run();
 
 	BOOST_LOG_TRIVIAL(info) << "네트워크 접속 종료";

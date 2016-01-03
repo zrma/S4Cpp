@@ -10,18 +10,18 @@ namespace S4Network
 	class NetworkManager
 	{
 	public:
-		NetworkManager();
+		NetworkManager(int port);
 		~NetworkManager();
 
-		void	Init(int Port);
+		void	Init();
 		void	Run();
 
 	private:
 		void	StartAccept();
 
-		std::shared_ptr<boost::asio::ip::tcp::acceptor>		mAcceptor;
-		std::shared_ptr<boost::asio::io_service>			mIOService;
-
+		boost::asio::io_service			mIOService;
+		boost::asio::ip::tcp::acceptor	mAcceptor;
+		
 		bool	mIsAccepting = false;
 		int		mSeqNumber = 0;
 	};

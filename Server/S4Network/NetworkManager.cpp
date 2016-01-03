@@ -5,26 +5,20 @@
 
 namespace S4Network
 {
-	NetworkManager::NetworkManager()
+	NetworkManager::NetworkManager(int port)
+		: mAcceptor(mIOService, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port))
 	{
 	}
 
 	NetworkManager::~NetworkManager()
 	{
 	}
-
-	void NetworkManager::Init(int port)
-	{
-		mIOService = std::make_shared<boost::asio::io_service>();
-		mAcceptor = std::make_shared<boost::asio::ip::tcp::acceptor>
-			((*mIOService), boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port));
-	}
-
+	
 	void NetworkManager::Run()
 	{
 		StartAccept();
 
-		mIOService->run();
+		mIOService.run();
 	}
 
 	void NetworkManager::StartAccept()

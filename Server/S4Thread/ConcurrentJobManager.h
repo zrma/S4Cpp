@@ -14,16 +14,16 @@ namespace S4Thread
 		template <class F>
 		void PostJob(F f)
 		{
-			m_io_service.post(f);
+			mIOService.post(f);
 		}
 
-		boost::asio::io_service& GetHandler() { return m_io_service; }
+		boost::asio::io_service& GetHandler() { return mIOService; }
 
 	private:
-		boost::asio::io_service m_io_service;
-		boost::thread_group m_Group;
+		boost::asio::io_service mIOService;
+		boost::thread_group mGroup;
 
-		std::shared_ptr<boost::asio::io_service::work> m_Work;
+		std::shared_ptr<boost::asio::io_service::work> mWork;
 	};
 
 }
