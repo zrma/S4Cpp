@@ -10,6 +10,7 @@
 #include <boost/log/trivial.hpp>
 
 #include "../../S4Util/Exception.h"
+#include "../../S4Util/TimeStamp.h"
 
 #pragma comment(lib, "S4Thread.lib")
 #pragma comment(lib, "S4Network.lib")
@@ -26,13 +27,12 @@ int main()
 {
 	/// for dump on crash
 	SetUnhandledExceptionFilter(S4Util::ExceptionFilter);
-	
-	S4Thread::LThreadType = S4Thread::THREAD_TYPE::THREAD_MAIN;
 
+	S4Thread::LThreadType = S4Thread::THREAD_TYPE::THREAD_MAIN;
 	GNetworkManager.Run();
 
 	BOOST_LOG_TRIVIAL(info) << "네트워크 접속 종료";
 	getchar();
-		
+
     return 0;
 }

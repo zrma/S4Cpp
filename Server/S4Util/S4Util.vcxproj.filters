@@ -15,9 +15,6 @@
     <Filter Include="Log">
       <UniqueIdentifier>{a0eed2c5-f7c0-4355-b9e8-9b6c993de2f4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Pool">
-      <UniqueIdentifier>{f27d9b2e-06ba-4d50-b84d-8e0e5d503d98}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -38,8 +35,8 @@
     <ClInclude Include="Log.h">
       <Filter>Log</Filter>
     </ClInclude>
-    <ClInclude Include="MemoryPool.h">
-      <Filter>Pool</Filter>
+    <ClInclude Include="TimeStamp.h">
+      <Filter>Default</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -55,6 +52,7 @@
     <ClCompile Include="Log.cpp">
       <Filter>Log</Filter>
     </ClCompile>
+    <ClCompile Include="TimeStamp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
