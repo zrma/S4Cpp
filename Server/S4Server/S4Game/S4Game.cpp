@@ -31,6 +31,7 @@ int main()
 	S4Thread::LThreadType = S4Thread::THREAD_TYPE::THREAD_MAIN;
 	GNetworkManager.Run();
 
+
 	BOOST_LOG_TRIVIAL(info) << "네트워크 접속 종료";
 	getchar();
 
