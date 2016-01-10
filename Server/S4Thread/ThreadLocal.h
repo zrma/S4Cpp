@@ -12,7 +12,11 @@ namespace S4Thread
 		THREAD_WORLD
 	};
 
+	class LockOrderChecker;
+
 	extern thread_local int LThreadType;
 	extern thread_local int LThreadId;
 	extern thread_local int LTickCount;
+
+	extern thread_local LockOrderChecker* LLockOrderChecker;
 }

@@ -32,6 +32,12 @@
     <ClInclude Include="ThreadLocal.h">
       <Filter>Thread</Filter>
     </ClInclude>
+    <ClInclude Include="FastSpinlock.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="LockOrderChecker.h">
+      <Filter>JobManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConcurrentJobManager.cpp">
@@ -43,6 +49,10 @@
     <ClCompile Include="ThreadLocal.cpp">
       <Filter>Thread</Filter>
     </ClCompile>
+    <ClCompile Include="FastSpinlock.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="LockOrderChecker.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
