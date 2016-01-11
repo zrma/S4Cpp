@@ -10,9 +10,7 @@
 
 #include <boost/log/trivial.hpp>
 
-// #include "../../S4Util/Exception.h"
-#include "../../S4Util/ObjectPool.h"
-#include "../../S4Util/TimeStamp.h"
+#include "../../S4Util/Exception.h"
 
 #include <deque>
 
@@ -27,103 +25,16 @@ const int PORT_NUM = 35555;
 S4Network::NetworkManager GNetworkManager(PORT_NUM);
 S4Thread::ConcurrentJobManager GJobManager(8);
 
-void Test();
-
 int main()
 {
 	/// for dump on crash
 	SetUnhandledExceptionFilter(S4Util::ExceptionFilter);
 
 	S4Thread::LThreadType = S4Thread::THREAD_TYPE::THREAD_MAIN;
-	// GNetworkManager.Run();
+	GNetworkManager.Run();
 	
-	Test();
-
-	// BOOST_LOG_TRIVIAL(info) << "네트워크 접속 종료";
+	BOOST_LOG_TRIVIAL(info) << "네트워크 접속 종료";
 	getchar();
 
     return 0;
-}
-
-class T
-{
-public:
-	int a;
-	int b;
-
-	void Func()
-	{
-		a = b;
-	}
-};
-
-class T2 : public S4Util::ObjectPool<T2>
-{
-public:
-	int a;
-	int b;
-
-	void Func()
-	{
-		a = b;
-	}
-};
-
-void Test()
-{
-	S4Thread::LLockOrderChecker = new S4Thread::LockOrderChecker(S4Thread::LThreadType);
-
-	{
-		S4Util::TimeStamp st("Raw new/delete");
-
-		std::deque<T*> vec;
-		
-		for (std::size_t i = 0; i < 100000; ++i )
-		{
-			T* t = new T();
-			t->Func();
-
-			vec.push_back(t);
-
-			t = new T();
-			t->Func();
-
-			vec.push_front(t);
-		}
-
-		for (std::size_t i = 0; i < 100000; ++i)
-		{
-			T* t = vec.front();
-			delete t;
-
-			vec.pop_front();
-		}
-	}
-
-	{
-		S4Util::TimeStamp st("Object Pool new/delete");
-
-		std::deque<T2*> vec;
-
-		for (std::size_t i = 0; i < 100000; ++i)
-		{
-			T2* t = new T2();
-			t->Func();
-
-			vec.push_back(t);
-			
-			t = new T2();
-			t->Func();
-
-			vec.push_front(t);
-		}
-
-		for (std::size_t i = 0; i < 100000; ++i)
-		{
-			T2* t = vec.front();
-			delete t;
-
-			vec.pop_front();
-		}
-	}
 }
