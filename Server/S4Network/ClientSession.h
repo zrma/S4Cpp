@@ -7,7 +7,7 @@ namespace S4Network
 	class ClientSession : public Session
 	{
 	public:
-		ClientSession();
+		ClientSession() = delete;
 		virtual ~ClientSession();
 	};
 }

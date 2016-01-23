@@ -36,7 +36,7 @@
       <Filter>Thread</Filter>
     </ClInclude>
     <ClInclude Include="LockOrderChecker.h">
-      <Filter>JobManager</Filter>
+      <Filter>Thread</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -52,7 +52,9 @@
     <ClCompile Include="FastSpinlock.cpp">
       <Filter>Thread</Filter>
     </ClCompile>
-    <ClCompile Include="LockOrderChecker.cpp" />
+    <ClCompile Include="LockOrderChecker.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

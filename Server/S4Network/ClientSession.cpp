@@ -3,11 +3,6 @@
 
 namespace S4Network
 {
-	ClientSession::ClientSession()
-	{
-	}
-
-
 	ClientSession::~ClientSession()
 	{
 	}
