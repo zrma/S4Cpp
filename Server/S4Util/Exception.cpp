@@ -60,8 +60,9 @@ namespace S4Util
 	LONG WINAPI ExceptionFilter(EXCEPTION_POINTERS* exceptionInfo)
 	{
 		if (IsDebuggerPresent())
+		{
 			return EXCEPTION_CONTINUE_SEARCH;
-
+		}
 
 		THREADENTRY32 te32;
 		DWORD myThreadId = GetCurrentThreadId();
@@ -93,10 +94,8 @@ namespace S4Util
 			CloseHandle(hThreadSnap);
 		}
 
-		std::ofstream historyOut("EduServer_exception.txt", std::ofstream::out);
+		std::ofstream historyOut("S4ServerException_Log.txt", std::ofstream::out);
 
-		// TASK 콜 히스토리 수록 클래스 구현
-		/*
 		/// 콜히스토리 남기고
 		historyOut << "========== WorkerThread Call History ==========" << std::endl << std::endl;
 		for (int i = 0; i < MAX_WORKER_THREAD; ++i)
@@ -116,7 +115,7 @@ namespace S4Util
 				GThreadCallElapsedRecord[i]->DumpOut(historyOut);
 			}
 		}
-		*/
+		
 		/// 콜스택도 남기고
 		historyOut << "========== Exception Call Stack ==========" << std::endl << std::endl;
 		StackWalker stackWalker;
@@ -131,7 +130,6 @@ namespace S4Util
 
 		/// 마지막으로 dump file 남기자.
 		MakeDump(exceptionInfo);
-
 
 		ExitProcess(1);
 		/// 여기서 쫑
