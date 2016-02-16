@@ -95,6 +95,7 @@ namespace S4Util
 
 		std::ofstream historyOut("EduServer_exception.txt", std::ofstream::out);
 
+		// TASK 콜 히스토리 수록 클래스 구현
 		/*
 		/// 콜히스토리 남기고
 		historyOut << "========== WorkerThread Call History ==========" << std::endl << std::endl;

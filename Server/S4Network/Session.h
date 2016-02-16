@@ -17,6 +17,8 @@ namespace S4Network
 		boost::asio::ip::tcp::socket mTcpSocket;
 		boost::asio::ip::udp::socket mUdpSocket;
 
+		// TASK 버퍼 구현
+		// TASK 버퍼 멀티스레드 락 추가
 		// FastSpinlock	mSendBufferLock;
 		int				mSendPendingCount;
 

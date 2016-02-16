@@ -20,6 +20,7 @@ namespace S4Network
 		typedef std::list<ClientSessionPtr> ClientList;
 		ClientList mFreeSessionList;
 
+		// TASK 락 구성하기
 		// FastSpinlock mLock;
 
 		uint64_t mCurrentIssueCount;

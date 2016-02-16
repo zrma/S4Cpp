@@ -12,8 +12,6 @@
 
 #include "../../S4Util/Exception.h"
 
-#include <deque>
-
 #pragma comment(lib, "S4Thread.lib")
 #pragma comment(lib, "S4Network.lib")
 
@@ -32,9 +30,9 @@ int main()
 
 	S4Thread::LThreadType = S4Thread::THREAD_TYPE::THREAD_MAIN;
 	GNetworkManager.Run();
-	
+
 	BOOST_LOG_TRIVIAL(info) << "네트워크 접속 종료";
 	getchar();
 
-    return 0;
+	return 0;
 }

@@ -25,6 +25,8 @@ namespace S4Network
 	{
 		BOOST_LOG_TRIVIAL(info) << "클라이언트 접속 대기";
 
+		// TASK 클라이언트 접속 시작
+
 		/*
 		m_pSession = new Session(m_acceptor.get_io_service());
 
