@@ -4,7 +4,6 @@
 #include "stdafx.h"
 
 #include "../../S4Thread/ThreadLocal.h"
-#include "../../S4Thread/LockOrderChecker.h"
 #include "../../S4Thread/ConcurrentJobManager.h"
 #include "../../S4Network/NetworkManager.h"
 
@@ -72,7 +71,7 @@ int main()
 		GJobManager.PostJob(Func);
 	}
 
-	Sleep(3000);
+	Sleep(1000);
 	S4Util::CRASH_ASSERT(false);
 
 	BOOST_LOG_TRIVIAL(info) << "네트워크 접속 종료";

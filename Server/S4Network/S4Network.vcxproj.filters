@@ -31,10 +31,10 @@
       <Filter>SessionHandling</Filter>
     </ClInclude>
     <ClInclude Include="ClientSession.h">
-      <Filter>Default</Filter>
+      <Filter>SessionHandling</Filter>
     </ClInclude>
     <ClInclude Include="Session.h">
-      <Filter>Default</Filter>
+      <Filter>SessionHandling</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

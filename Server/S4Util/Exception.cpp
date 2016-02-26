@@ -68,6 +68,8 @@ namespace S4Util
 		DWORD myThreadId = GetCurrentThreadId();
 		DWORD myProcessId = GetCurrentProcessId();
 
+		std::vector<HANDLE> hThreadVector;
+
 		HANDLE hThreadSnap = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
 		if (hThreadSnap != INVALID_HANDLE_VALUE)
 		{
@@ -85,6 +87,8 @@ namespace S4Util
 						{
 							SuspendThread(hThread);
 						}
+
+						hThreadVector.push_back(hThread);
 					}
 
 				} while (Thread32Next(hThreadSnap, &te32));
@@ -118,9 +122,18 @@ namespace S4Util
 		
 		/// 콜스택도 남기고
 		historyOut << "========== Exception Call Stack ==========" << std::endl << std::endl;
-		StackWalker stackWalker;
+		StackWalker stackWalker = StackWalker( myProcessId, OpenProcess( PROCESS_ALL_ACCESS, TRUE, myProcessId) );
+		stackWalker.LoadModules();
 		stackWalker.SetOutputStream(&historyOut);
 		stackWalker.ShowCallstack();
+		
+		for ( const auto& iter : hThreadVector )
+		{
+			// TASK - Thread Local Storage(TLS)에서 스레드 id 값을 가져와야 한다.
+			historyOut << std::endl << "===== Thread Call Stack [Thread:" << GetThreadId(iter) << "]" << std::endl;
+			stackWalker.ShowCallstack(iter);
+
+		}
 
 		/// 이벤트 로그 남기고
 		EventLogDumpOut(historyOut);

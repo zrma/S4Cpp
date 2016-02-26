@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "../S4Util/Log.h"
 #include "ThreadLocal.h"
-#include "LockOrderChecker.h"
 
 namespace S4Thread
 {
@@ -10,8 +9,6 @@ namespace S4Thread
 	thread_local void* LRecentThisPointer = nullptr;
 
 	thread_local int LTickCount = 0;
-
-	thread_local LockOrderChecker* LLockOrderChecker;	
 }
 
 namespace S4Util

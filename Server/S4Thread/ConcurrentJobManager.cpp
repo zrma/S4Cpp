@@ -27,13 +27,10 @@ namespace S4Thread
 				}
 
 				LThreadId = static_cast<int>(i);
-
-				// TASK - 락 오더 체커 추가해야 함
-				// LLockOrderChecker = new LockOrderChecker(LWorkerThreadId);
-
+				
 				S4Util::GThreadCallHistory[LThreadId] = S4Util::LThreadCallHistory = new S4Util::ThreadCallHistory(LThreadId);
 				S4Util::GThreadCallElapsedRecord[LThreadId] = S4Util::LThreadCallElapsedRecord = new S4Util::ThreadCallElapsedRecord(LThreadId);
-
+				
 				Sleep(1000);
 			});
 		}

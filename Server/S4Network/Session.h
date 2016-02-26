@@ -10,9 +10,7 @@ namespace S4Network
 	public:
 		Session(boost::asio::io_service& io_service);
 		~Session();
-
-
-
+		
 	protected:
 		boost::asio::ip::tcp::socket mTcpSocket;
 		boost::asio::ip::udp::socket mUdpSocket;
@@ -26,4 +24,3 @@ namespace S4Network
 		volatile long	mConnected = 0;
 	};
 }
-
