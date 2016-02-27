@@ -1,12 +1,6 @@
 #pragma once
 
 #include <thread>
-#include <unordered_set>
-
-#define MAX_IO_THREAD		4
-#define MAX_DB_THREAD		4
-#define MAX_LOGIC_THREAD	8
-#define MAX_WORKER_THREAD	(MAX_IO_THREAD + MAX_DB_THREAD + MAX_LOGIC_THREAD)
 
 namespace S4Framework
 {

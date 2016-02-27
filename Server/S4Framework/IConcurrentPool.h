@@ -1,7 +1,16 @@
 #pragma once
 
+#pragma warning(push)
+#pragma warning(disable: 4005)
 #include <boost/asio.hpp>
+#pragma warning(pop)
+
 #include <boost/thread.hpp>
+
+#define MAX_IO_THREAD		4
+#define MAX_DB_THREAD		4
+#define MAX_LOGIC_THREAD	8
+#define MAX_WORKER_THREAD	(MAX_IO_THREAD + MAX_DB_THREAD + MAX_LOGIC_THREAD)
 
 namespace S4Framework
 {

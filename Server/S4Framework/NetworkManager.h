@@ -1,13 +1,5 @@
 #pragma once
 
-#pragma warning(push)
-#pragma warning(disable: 4005)
-#include <boost/asio.hpp>
-#pragma warning(pop)
-
-#include <boost/thread.hpp>
-
-#include "ThreadLocal.h"
 #include "IConcurrentPool.h"
 
 namespace S4Framework

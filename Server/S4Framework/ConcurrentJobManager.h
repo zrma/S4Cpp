@@ -1,7 +1,6 @@
 #pragma once
 
 #include "IConcurrentPool.h"
-#include "ThreadLocal.h"
 
 namespace S4Framework
 {
