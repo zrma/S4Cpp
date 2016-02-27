@@ -55,7 +55,6 @@
     <ClCompile Include="Log.cpp">
       <Filter>Log</Filter>
     </ClCompile>
-    <ClCompile Include="TimeStamp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

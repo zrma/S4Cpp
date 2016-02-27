@@ -102,22 +102,20 @@ namespace S4Util
 
 		/// 콜히스토리 남기고
 		historyOut << "========== WorkerThread Call History ==========" << std::endl << std::endl;
-		for (int i = 0; i < MAX_WORKER_THREAD; ++i)
+		ThreadCallHistory* history = (ThreadCallHistory*)InterlockedPopEntrySList(&GThreadCallHistory);
+		while (history)
 		{
-			if (GThreadCallHistory[i])
-			{
-				GThreadCallHistory[i]->DumpOut(historyOut);
-			}
+			history->DumpOut(historyOut);
+			history = (ThreadCallHistory*)InterlockedPopEntrySList(&GThreadCallHistory);
 		}
-
+		
 		/// 콜성능 남기고
 		historyOut << "========== WorkerThread Call Performance ==========" << std::endl << std::endl;
-		for (int i = 0; i < MAX_WORKER_THREAD; ++i)
+		ThreadCallElapsedRecord* record = (ThreadCallElapsedRecord*)InterlockedPopEntrySList(&GThreadCallElapsedRecord);
+		while (record)
 		{
-			if (GThreadCallElapsedRecord[i])
-			{
-				GThreadCallElapsedRecord[i]->DumpOut(historyOut);
-			}
+			record->DumpOut(historyOut);
+			record = (ThreadCallElapsedRecord*)InterlockedPopEntrySList(&GThreadCallElapsedRecord);
 		}
 		
 		/// 콜스택도 남기고
@@ -129,7 +127,6 @@ namespace S4Util
 		
 		for ( const auto& iter : hThreadVector )
 		{
-			// TASK - Thread Local Storage(TLS)에서 스레드 id 값을 가져와야 한다.
 			historyOut << std::endl << "===== Thread Call Stack [Thread:" << GetThreadId(iter) << "]" << std::endl;
 			stackWalker.ShowCallstack(iter);
 

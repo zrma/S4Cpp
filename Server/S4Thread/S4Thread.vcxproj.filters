@@ -32,6 +32,9 @@
     <ClInclude Include="ThreadLocal.h">
       <Filter>Thread</Filter>
     </ClInclude>
+    <ClInclude Include="IConcurrentPool.h">
+      <Filter>JobManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConcurrentJobManager.cpp">
@@ -42,6 +45,9 @@
     </ClCompile>
     <ClCompile Include="ThreadLocal.cpp">
       <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="IConcurrentPool.cpp">
+      <Filter>JobManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

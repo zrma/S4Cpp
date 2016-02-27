@@ -16,6 +16,6 @@ namespace S4Util
 	thread_local ThreadCallHistory* LThreadCallHistory = nullptr;
 	thread_local ThreadCallElapsedRecord* LThreadCallElapsedRecord = nullptr;
 
-	ThreadCallHistory* GThreadCallHistory[MAX_WORKER_THREAD] = { 0, };
-	ThreadCallElapsedRecord* GThreadCallElapsedRecord[MAX_WORKER_THREAD] = { 0, };
+	SLIST_HEADER GThreadCallHistory;
+	SLIST_HEADER GThreadCallElapsedRecord;
 }

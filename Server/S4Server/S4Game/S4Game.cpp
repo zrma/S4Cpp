@@ -7,8 +7,6 @@
 #include "../../S4Thread/ConcurrentJobManager.h"
 #include "../../S4Network/NetworkManager.h"
 
-#include <boost/log/trivial.hpp>
-
 #include "../../S4Util/Exception.h"
 #include "../../S4Util/Log.h"
 
@@ -22,23 +20,8 @@
 
 const int PORT_NUM = 35555;
 
-S4Network::NetworkManager GNetworkManager(PORT_NUM);
-S4Thread::ConcurrentJobManager GJobManager(MAX_WORKER_THREAD);
-std::mutex GCoutLock;
-
-void Func()
-{
-	TRACE_THIS
-
-	while (true)
-	{
-		TRACE_PERF
-
-		GCoutLock.lock();
-		std::cout << "테스트 출력 - " << GetCurrentThreadId() << std::endl;
-		GCoutLock.unlock();
-	}
-}
+std::shared_ptr<S4Network::NetworkManager> GNetworkManager;
+std::shared_ptr<S4Thread::ConcurrentJobManager> GLogicPool;
 
 int main()
 {
@@ -46,32 +29,11 @@ int main()
 	SetUnhandledExceptionFilter(S4Util::ExceptionFilter);
 
 	S4Thread::LThreadType = S4Thread::THREAD_TYPE::THREAD_MAIN;
-	GNetworkManager.Run();
 	
-	auto f = []() {
-		TRACE_THIS
-
-		while (true)
-		{
-			TRACE_PERF
-
-			GCoutLock.lock();
-			std::cout << "테스트 출력 - " << GetCurrentThreadId() << std::endl;
-			GCoutLock.unlock();
-		}
-	};
-
-	for (std::size_t i = 0; i < MAX_WORKER_THREAD; ++i)
-	{
-		GJobManager.PostJob(f);
-	}
-
-	for (std::size_t i = 0 ; i < MAX_WORKER_THREAD ; ++i)
-	{
-		GJobManager.PostJob(Func);
-	}
-
-	Sleep(1000);
+	GLogicPool = std::make_unique<S4Thread::ConcurrentJobManager>();
+	GNetworkManager = std::make_unique<S4Network::NetworkManager>((PORT_NUM));
+	GNetworkManager->Run();
+	
 	S4Util::CRASH_ASSERT(false);
 
 	BOOST_LOG_TRIVIAL(info) << "네트워크 접속 종료";

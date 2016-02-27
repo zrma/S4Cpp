@@ -1,12 +1,12 @@
 #include "stdafx.h"
-#include "NetworkManager.h"
 
-#include <boost/log/trivial.hpp>
+#include "NetworkManager.h"
+#include "../S4Util/Log.h"
 
 namespace S4Network
 {
-	NetworkManager::NetworkManager(int port)
-		: mAcceptor(mIOService, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port))
+	NetworkManager::NetworkManager(int port, std::size_t size)
+		: IConcurrentPool(size), mAcceptor(mIOService, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port))
 	{
 	}
 
@@ -17,8 +17,6 @@ namespace S4Network
 	void NetworkManager::Run()
 	{
 		StartAccept();
-
-		mIOService.run();
 	}
 
 	void NetworkManager::StartAccept()

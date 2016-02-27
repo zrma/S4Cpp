@@ -1,10 +1,12 @@
 #pragma once
 
 #include <thread>
+#include <unordered_set>
 
 #define MAX_IO_THREAD		4
 #define MAX_DB_THREAD		4
-#define MAX_WORKER_THREAD	(MAX_IO_THREAD + MAX_DB_THREAD)
+#define MAX_LOGIC_THREAD	8
+#define MAX_WORKER_THREAD	(MAX_IO_THREAD + MAX_DB_THREAD + MAX_LOGIC_THREAD)
 
 namespace S4Thread
 {
@@ -27,10 +29,10 @@ namespace S4Util
 {
 	class ThreadCallHistory;
 	class ThreadCallElapsedRecord;
-
+	
 	extern thread_local ThreadCallHistory* LThreadCallHistory;
 	extern thread_local ThreadCallElapsedRecord* LThreadCallElapsedRecord;
 
-	extern ThreadCallHistory* GThreadCallHistory[MAX_WORKER_THREAD];
-	extern ThreadCallElapsedRecord* GThreadCallElapsedRecord[MAX_WORKER_THREAD];
+	extern SLIST_HEADER GThreadCallHistory;
+	extern SLIST_HEADER GThreadCallElapsedRecord;
 }

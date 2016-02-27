@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <boost/log/trivial.hpp>
 
 namespace S4Thread
 {
@@ -9,7 +10,7 @@ namespace S4Thread
 
 namespace S4Util
 {
-	class ThreadCallHistory
+	class ThreadCallHistory : SLIST_ENTRY
 	{
 	public:
 		ThreadCallHistory(int tid) : mThreadId(tid)
@@ -35,7 +36,7 @@ namespace S4Util
 		const char*	mHistory[MAX_HISTORY];
 	};
 	
-	class ThreadCallElapsedRecord
+	class ThreadCallElapsedRecord : SLIST_ENTRY
 	{
 	public:
 		ThreadCallElapsedRecord(int tid) : mThreadId(tid)

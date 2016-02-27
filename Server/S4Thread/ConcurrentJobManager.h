@@ -1,29 +1,15 @@
 #pragma once
 
-#include <boost/asio.hpp>
-#include <boost/thread.hpp>
+#include "IConcurrentPool.h"
+#include "ThreadLocal.h"
 
 namespace S4Thread
 {
-	class ConcurrentJobManager
+	class ConcurrentJobManager : IConcurrentPool
 	{
 	public:
-		ConcurrentJobManager(std::size_t size);
+		ConcurrentJobManager(std::size_t size = MAX_LOGIC_THREAD);
 		~ConcurrentJobManager();
-
-		template <class F>
-		void PostJob(F f)
-		{
-			mIOService.post(f);
-		}
-
-		boost::asio::io_service& GetHandler() { return mIOService; }
-
-	private:
-		boost::asio::io_service mIOService;
-		boost::thread_group mGroup;
-
-		std::shared_ptr<boost::asio::io_service::work> mWork;
 	};
 
 }

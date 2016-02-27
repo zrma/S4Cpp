@@ -5,23 +5,26 @@
 #include <boost/asio.hpp>
 #pragma warning(pop)
 
+#include <boost/thread.hpp>
+
+#include "../S4Thread/ThreadLocal.h"
+#include "../S4Thread/IConcurrentPool.h"
+
 namespace S4Network
 {
-	class NetworkManager
+	class NetworkManager : S4Thread::IConcurrentPool
 	{
 	public:
-		NetworkManager(int port);
+		NetworkManager(int port, std::size_t size = MAX_IO_THREAD);
 		~NetworkManager();
 
-		void	Init();
 		void	Run();
-
+		
 	private:
 		void	StartAccept();
 
-		boost::asio::io_service			mIOService;
 		boost::asio::ip::tcp::acceptor	mAcceptor;
-		
+
 		bool	mIsAccepting = false;
 		int		mSeqNumber = 0;
 	};
