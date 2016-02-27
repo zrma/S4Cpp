@@ -1,12 +1,11 @@
 #pragma once
 
 #include "Exception.h"
-#include "../S4Thread/FastSpinlock.h"
 
-namespace S4Util
+namespace S4Framework
 {
 	template <class TOBJECT, int ALLOC_COUNT = 100>
-	class ObjectPool : public S4Thread::ClassTypeLock<TOBJECT>
+	class ObjectPool : public ClassTypeLock<TOBJECT>
 	{
 	public:
 		ObjectPool()

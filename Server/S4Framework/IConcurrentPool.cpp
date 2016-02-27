@@ -1,10 +1,10 @@
 #include "stdafx.h"
 
-#include "..\S4Util\Log.h"
+#include "Log.h"
 #include "ThreadLocal.h"
 #include "IConcurrentPool.h"
 
-namespace S4Thread
+namespace S4Framework
 {
 	IConcurrentPool::IConcurrentPool(std::size_t size) : mPoolSize(size)
 	{
@@ -26,11 +26,11 @@ namespace S4Thread
 	{
 		LThreadId = GetCurrentThreadId();
 
-		S4Util::LThreadCallHistory = new S4Util::ThreadCallHistory(LThreadId);
-		InterlockedPushEntrySList(&S4Util::GThreadCallHistory, (PSLIST_ENTRY)S4Util::LThreadCallHistory);
+		LThreadCallHistory = new ThreadCallHistory(LThreadId);
+		InterlockedPushEntrySList(&GThreadCallHistory, (PSLIST_ENTRY)LThreadCallHistory);
 
-		S4Util::LThreadCallElapsedRecord = new S4Util::ThreadCallElapsedRecord(LThreadId);
-		InterlockedPushEntrySList(&S4Util::GThreadCallElapsedRecord, (PSLIST_ENTRY)S4Util::LThreadCallElapsedRecord);
+		LThreadCallElapsedRecord = new ThreadCallElapsedRecord(LThreadId);
+		InterlockedPushEntrySList(&GThreadCallElapsedRecord, (PSLIST_ENTRY)LThreadCallElapsedRecord);
 
 		ioService->run();
 	}

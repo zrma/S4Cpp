@@ -3,7 +3,7 @@
 #include <boost/asio.hpp>
 // #include "CircularBuffer.h"
 
-namespace S4Network
+namespace S4Framework
 {
 	class Session
 	{

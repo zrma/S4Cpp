@@ -1,6 +1,6 @@
 #pragma once
 
-namespace S4Network
+namespace S4Framework
 {
 	class ClientSession;
 	typedef std::shared_ptr<ClientSession> ClientSessionPtr;

@@ -3,7 +3,7 @@
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 
-namespace S4Thread
+namespace S4Framework
 {
 	class IConcurrentPool
 	{

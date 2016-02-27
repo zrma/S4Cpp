@@ -3,13 +3,10 @@
 #include <iostream>
 #include <boost/log/trivial.hpp>
 
-namespace S4Thread
+namespace S4Framework
 {
 	extern thread_local int LThreadId;
-}
 
-namespace S4Util
-{
 	class ThreadCallHistory : SLIST_ENTRY
 	{
 	public:
@@ -102,7 +99,7 @@ namespace S4Util
 	{
 		__int64 index = _InterlockedIncrement64(&gCurrentLogIndex) - 1;
 		LogEvent& event = gLogEvents[index & (MAX_LOG_SIZE - 1)];
-		event.mThreadId = S4Thread::LThreadId;
+		event.mThreadId = LThreadId;
 		event.mMessage = msg;
 		event.mAdditionalInfo = info;
 	}
@@ -111,8 +108,7 @@ namespace S4Util
 }
 
 #define TRACE_THIS	\
-	using namespace S4Thread; \
-	using namespace S4Util; \
+	using namespace S4Framework; \
 	__if_exists (this)	\
 	{	\
 		LRecentThisPointer = (void*)this;	\
@@ -123,4 +119,4 @@ namespace S4Util
 	}	
 
 #define TRACE_PERF	\
-	S4Util::ScopeElapsedCheck __scope_elapsed_check__(__FUNCSIG__);
+	S4Framework::ScopeElapsedCheck __scope_elapsed_check__(__FUNCSIG__);

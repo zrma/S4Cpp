@@ -3,7 +3,7 @@
 #include "IConcurrentPool.h"
 #include "ThreadLocal.h"
 
-namespace S4Thread
+namespace S4Framework
 {
 	class ConcurrentJobManager : IConcurrentPool
 	{

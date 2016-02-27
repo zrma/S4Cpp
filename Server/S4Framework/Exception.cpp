@@ -1,5 +1,5 @@
 ﻿#include "stdafx.h"
-#include "../S4Thread/ThreadLocal.h"
+#include "ThreadLocal.h"
 #include "Exception.h"
 #include "Log.h"
 #include <fstream>
@@ -12,7 +12,7 @@
 
 #define MAX_BUFF_SIZE 1024
 
-namespace S4Util
+namespace S4Framework
 {
 	void MakeDump(EXCEPTION_POINTERS* e)
 	{

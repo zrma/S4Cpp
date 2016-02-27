@@ -8,7 +8,7 @@
 #define MAX_LOGIC_THREAD	8
 #define MAX_WORKER_THREAD	(MAX_IO_THREAD + MAX_DB_THREAD + MAX_LOGIC_THREAD)
 
-namespace S4Thread
+namespace S4Framework
 {
 	enum THREAD_TYPE
 	{
@@ -20,13 +20,9 @@ namespace S4Thread
 
 	extern thread_local int LThreadType;
 	extern thread_local int LThreadId;
-	
-	extern thread_local void* LRecentThisPointer;
 	extern thread_local int LTickCount;
-}
-
-namespace S4Util
-{
+	extern thread_local void* LRecentThisPointer;
+	
 	class ThreadCallHistory;
 	class ThreadCallElapsedRecord;
 	

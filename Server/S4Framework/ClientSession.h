@@ -2,7 +2,7 @@
 
 #include "Session.h"
 
-namespace S4Network
+namespace S4Framework
 {
 	class ClientSession : public Session
 	{

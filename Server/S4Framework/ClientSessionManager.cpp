@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "ClientSessionManager.h"
 
-namespace S4Network
+namespace S4Framework
 {
 	std::shared_ptr<ClientSessionManager> GClientSessionManager;
 

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace S4Util
+namespace S4Framework
 {
 	LONG WINAPI ExceptionFilter(EXCEPTION_POINTERS* exceptionInfo);
 

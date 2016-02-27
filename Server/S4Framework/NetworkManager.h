@@ -7,12 +7,12 @@
 
 #include <boost/thread.hpp>
 
-#include "../S4Thread/ThreadLocal.h"
-#include "../S4Thread/IConcurrentPool.h"
+#include "ThreadLocal.h"
+#include "IConcurrentPool.h"
 
-namespace S4Network
+namespace S4Framework
 {
-	class NetworkManager : S4Thread::IConcurrentPool
+	class NetworkManager : IConcurrentPool
 	{
 	public:
 		NetworkManager(int port, std::size_t size = MAX_IO_THREAD);

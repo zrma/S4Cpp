@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "Log.h"
-#include "../S4Thread/ThreadLocal.h"
+#include "ThreadLocal.h"
 
-namespace S4Util
+namespace S4Framework
 {
 	void ThreadCallHistory::DumpOut(std::ostream& ost)
 	{
@@ -52,7 +52,7 @@ namespace S4Util
 
 	ScopeElapsedCheck::~ScopeElapsedCheck()
 	{
-		if (S4Thread::LThreadType != S4Thread::THREAD_MAIN)
+		if (LThreadType != THREAD_MAIN)
 		{
 			LThreadCallElapsedRecord->Append(mFuncSig, GetTickCount64() - mStartTick);
 		}

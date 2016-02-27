@@ -1,9 +1,9 @@
 #include "stdafx.h"
 
 #include "NetworkManager.h"
-#include "../S4Util/Log.h"
+#include "Log.h"
 
-namespace S4Network
+namespace S4Framework
 {
 	NetworkManager::NetworkManager(int port, std::size_t size)
 		: IConcurrentPool(size), mAcceptor(mIOService, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port))
