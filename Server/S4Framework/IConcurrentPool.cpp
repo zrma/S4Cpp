@@ -12,7 +12,7 @@ namespace S4Framework
 
 		for (std::size_t i = 0; i < mPoolSize; ++i)
 		{
-			mGroup.create_thread(boost::bind(&IConcurrentPool::Init, this, &mIOService));
+			mGroup.create_thread(boost::bind(&IConcurrentPool::Init, this));
 		}
 	}
 
@@ -22,7 +22,7 @@ namespace S4Framework
 		mGroup.join_all();
 	}
 
-	void IConcurrentPool::Init(boost::asio::io_service* ioService)
+	void IConcurrentPool::Init()
 	{
 		LThreadId = GetCurrentThreadId();
 
@@ -32,6 +32,6 @@ namespace S4Framework
 		LThreadCallElapsedRecord = new ThreadCallElapsedRecord(LThreadId);
 		InterlockedPushEntrySList(&GThreadCallElapsedRecord, (PSLIST_ENTRY)LThreadCallElapsedRecord);
 
-		ioService->run();
+		mIOService.run();
 	}
 }

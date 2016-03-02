@@ -28,13 +28,13 @@ namespace S4Framework
 			mIOService.post(f);
 		}
 
-		typedef boost::asio::strand SyncWarpper;
-		virtual SyncWarpper GetSyncWarpper() { return SyncWarpper(mIOService); }
+		typedef boost::asio::io_service Dispatcher;
+		Dispatcher& GetDispatcher() { return mIOService; }
 
-		virtual void Init(boost::asio::io_service* ioService);
+		virtual void Init();
 
 	protected:
-		boost::asio::io_service mIOService;
+		Dispatcher mIOService;
 		boost::thread_group mGroup;
 
 		std::shared_ptr<boost::asio::io_service::work> mWork;

@@ -65,6 +65,12 @@
     <ClInclude Include="StackWalker.h">
       <Filter>Util</Filter>
     </ClInclude>
+    <ClInclude Include="SyncExecutable.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeTraits.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ThreadLocal.cpp">
@@ -99,6 +105,9 @@
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>Default</Filter>
+    </ClCompile>
+    <ClCompile Include="SyncExecutable.cpp">
+      <Filter>Thread</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
