@@ -3,8 +3,8 @@
 #include "IConcurrentPool.h"
 
 namespace S4Framework
-{
-	class NetworkManager : IConcurrentPool
+{	
+	class NetworkManager : public IConcurrentPool
 	{
 	public:
 		NetworkManager(int port, std::size_t size = MAX_IO_THREAD);

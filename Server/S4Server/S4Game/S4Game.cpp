@@ -29,8 +29,6 @@ int main()
 	GNetworkManager = std::make_unique<S4Framework::NetworkManager>((PORT_NUM));
 	GNetworkManager->Run();
 	
-	S4Framework::CRASH_ASSERT(false);
-
 	BOOST_LOG_TRIVIAL(info) << "네트워크 접속 종료";
 	getchar();
 

@@ -25,16 +25,16 @@ namespace S4Framework
 		template <class F>
 		void PostJob(F f)
 		{
-			mIOService.post(f);
+			mDispatcher.post(f);
 		}
 
 		typedef boost::asio::io_service Dispatcher;
-		Dispatcher& GetDispatcher() { return mIOService; }
+		Dispatcher& GetDispatcher() { return mDispatcher; }
 
 		virtual void Init();
 
 	protected:
-		Dispatcher mIOService;
+		Dispatcher mDispatcher;
 		boost::thread_group mGroup;
 
 		std::shared_ptr<boost::asio::io_service::work> mWork;

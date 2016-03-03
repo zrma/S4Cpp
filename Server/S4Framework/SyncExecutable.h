@@ -6,7 +6,6 @@
 namespace S4Framework
 {
 	class IConcurrentPool;
-
 	class SyncExecutable : public std::enable_shared_from_this<SyncExecutable>
 	{
 	public:
@@ -24,11 +23,13 @@ namespace S4Framework
 
 			return std::static_pointer_cast<T>(shared_from_this());
 		}
-
+		
 	private:
-
 		typedef boost::asio::strand SyncWrapper;
 		SyncWrapper			mWrapper;
+
+		template <class T, class F, class... Args>
+		friend void DoSyncAfter(uint32_t after, T instance, F memfunc, Args&&... args);
 		IConcurrentPool&	mPool;
 	};
 	

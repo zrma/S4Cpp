@@ -2,11 +2,12 @@
 
 #include "NetworkManager.h"
 #include "Log.h"
+#include "ConcurrentJobManager.h"
 
 namespace S4Framework
 {
 	NetworkManager::NetworkManager(int port, std::size_t size)
-		: IConcurrentPool(size), mAcceptor(mIOService, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port))
+		: IConcurrentPool(size), mAcceptor(mDispatcher, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port))
 	{
 	}
 

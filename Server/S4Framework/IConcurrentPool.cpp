@@ -8,7 +8,7 @@ namespace S4Framework
 {
 	IConcurrentPool::IConcurrentPool(std::size_t size) : mPoolSize(size)
 	{
-		mWork = std::make_shared<boost::asio::io_service::work>(mIOService);
+		mWork = std::make_shared<boost::asio::io_service::work>(mDispatcher);
 
 		for (std::size_t i = 0; i < mPoolSize; ++i)
 		{
@@ -32,6 +32,6 @@ namespace S4Framework
 		LThreadCallElapsedRecord = new ThreadCallElapsedRecord(LThreadId);
 		InterlockedPushEntrySList(&GThreadCallElapsedRecord, (PSLIST_ENTRY)LThreadCallElapsedRecord);
 
-		mIOService.run();
+		mDispatcher.run();
 	}
 }
