@@ -6,7 +6,7 @@
 
 namespace S4Framework
 {
-	IConcurrentPool::IConcurrentPool(std::size_t size) : mPoolSize(size)
+	IConcurrentPool::IConcurrentPool(std::size_t size) : mPoolSize(size), mTimer(mDispatcher)
 	{
 		mWork = std::make_shared<boost::asio::io_service::work>(mDispatcher);
 

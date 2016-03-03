@@ -9,6 +9,7 @@
 
 #include "../../S4Framework/Exception.h"
 #include "../../S4Framework/Log.h"
+#include "../../S4Framework/SyncExecutable.h"
 
 #pragma comment(lib, "S4Framework.lib")
 #pragma comment(lib, "Dbghelp.lib")
@@ -18,6 +19,36 @@ const int PORT_NUM = 35555;
 std::shared_ptr<S4Framework::NetworkManager> GNetworkManager;
 std::shared_ptr<S4Framework::ConcurrentJobManager> GLogicPool;
 
+class Test : public S4Framework::SyncExecutable
+{
+public:
+	Test(S4Framework::IConcurrentPool& pool) : SyncExecutable(pool)
+	{
+
+	}
+	virtual ~Test() {}
+
+	void Start(int heartbeat)
+	{
+		mHeartBeat = heartbeat;
+
+		OnTick();
+	}
+
+	void OnTick()
+	{
+		if (mHeartBeat > 0)
+		{
+			BOOST_LOG_TRIVIAL(info) << "카운트 : " << ++mCount;
+			S4Framework::DoSyncAfter(mHeartBeat, GetSharedFromThis<Test>(), &Test::OnTick);
+		}
+	}
+
+private:
+	int mCount = 0;
+	int mHeartBeat = 0;
+};
+
 int main()
 {
 	/// for dump on crash
@@ -26,6 +57,10 @@ int main()
 	S4Framework::LThreadType = S4Framework::THREAD_TYPE::THREAD_MAIN;
 	
 	GLogicPool = std::make_unique<S4Framework::ConcurrentJobManager>();
+
+	auto test = std::make_shared<Test>(*GLogicPool);
+	S4Framework::DoSyncAfter(10, test, &Test::Start, 1000);
+
 	GNetworkManager = std::make_unique<S4Framework::NetworkManager>((PORT_NUM));
 	GNetworkManager->Run();
 	

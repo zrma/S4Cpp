@@ -6,6 +6,7 @@
 #pragma warning(pop)
 
 #include <boost/thread.hpp>
+#include <boost/asio/steady_timer.hpp>
 
 #define MAX_IO_THREAD		4
 #define MAX_DB_THREAD		4
@@ -31,11 +32,15 @@ namespace S4Framework
 		typedef boost::asio::io_service Dispatcher;
 		Dispatcher& GetDispatcher() { return mDispatcher; }
 
+		typedef boost::asio::steady_timer Timer;
+		Timer& GetTimer() { return mTimer; }
+
 		virtual void Init();
 
 	protected:
-		Dispatcher mDispatcher;
-		boost::thread_group mGroup;
+		Dispatcher			mDispatcher;
+		boost::thread_group	mGroup;
+		Timer				mTimer;
 
 		std::shared_ptr<boost::asio::io_service::work> mWork;
 		std::size_t	mPoolSize;

@@ -106,9 +106,6 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Default</Filter>
     </ClCompile>
-    <ClCompile Include="SyncExecutable.cpp">
-      <Filter>Thread</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

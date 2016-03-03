@@ -36,5 +36,10 @@ namespace S4Framework
 				boost::asio::placeholders::error)
 			);
 		*/
+
+		while (true)
+		{
+			Sleep(1000);
+		}
 	}
 }
