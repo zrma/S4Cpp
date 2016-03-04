@@ -9,5 +9,8 @@ namespace S4Framework
 	public:
 		ConcurrentJobManager(std::size_t size = MAX_LOGIC_THREAD);
 		~ConcurrentJobManager();
+
+	private:
+		virtual void InitThread() {};
 	};
 }

@@ -65,10 +65,10 @@
     <ClInclude Include="StackWalker.h">
       <Filter>Util</Filter>
     </ClInclude>
-    <ClInclude Include="SyncExecutable.h">
+    <ClInclude Include="TypeTraits.h">
       <Filter>Thread</Filter>
     </ClInclude>
-    <ClInclude Include="TypeTraits.h">
+    <ClInclude Include="ISyncExecutable.h">
       <Filter>Thread</Filter>
     </ClInclude>
   </ItemGroup>

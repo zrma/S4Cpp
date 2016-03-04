@@ -9,7 +9,7 @@
 
 #include "../../S4Framework/Exception.h"
 #include "../../S4Framework/Log.h"
-#include "../../S4Framework/SyncExecutable.h"
+#include "../../S4Framework/ISyncExecutable.h"
 
 #pragma comment(lib, "S4Framework.lib")
 #pragma comment(lib, "Dbghelp.lib")
@@ -19,10 +19,10 @@ const int PORT_NUM = 35555;
 std::shared_ptr<S4Framework::NetworkManager> GNetworkManager;
 std::shared_ptr<S4Framework::ConcurrentJobManager> GLogicPool;
 
-class Test : public S4Framework::SyncExecutable
+class Test : public S4Framework::ISyncExecutable
 {
 public:
-	Test(S4Framework::IConcurrentPool& pool) : SyncExecutable(pool)
+	Test(S4Framework::IConcurrentPool& pool) : ISyncExecutable(pool)
 	{
 
 	}
@@ -75,6 +75,7 @@ int main()
 	S4Framework::LThreadType = S4Framework::THREAD_TYPE::THREAD_MAIN;
 	
 	GLogicPool = std::make_unique<S4Framework::ConcurrentJobManager>();
+	GLogicPool->Init();
 
 	for (std::size_t i = 0; i < 3000; ++i)
 	{
@@ -85,7 +86,8 @@ int main()
 		S4Framework::DoSyncAfter(10, t1, &Test::Start, heartBeat);
 	}
 
-	GNetworkManager = std::make_unique<S4Framework::NetworkManager>((PORT_NUM));
+	GNetworkManager = std::make_unique<S4Framework::NetworkManager>(PORT_NUM);
+	GNetworkManager->Init();
 	GNetworkManager->Run();
 	
 	BOOST_LOG_TRIVIAL(info) << "네트워크 접속 종료";

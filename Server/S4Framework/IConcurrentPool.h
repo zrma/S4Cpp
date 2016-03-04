@@ -28,13 +28,15 @@ namespace S4Framework
 		{
 			mDispatcher.post(f);
 		}
-
+		
 		typedef boost::asio::io_service Dispatcher;
 		Dispatcher& GetDispatcher() { return mDispatcher; }
 		
-		virtual void Init();
+		void Init();
 
 	protected:
+		virtual void InitThread() = 0;
+
 		Dispatcher			mDispatcher;
 		boost::thread_group	mGroup;
 		

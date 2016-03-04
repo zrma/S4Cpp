@@ -3,6 +3,7 @@
 #include "NetworkManager.h"
 #include "Log.h"
 #include "ConcurrentJobManager.h"
+#include "Session.h"
 
 namespace S4Framework
 {
@@ -18,6 +19,12 @@ namespace S4Framework
 	void NetworkManager::Run()
 	{
 		StartAccept();
+	}
+
+	void NetworkManager::InitThread()
+	{
+		BOOST_LOG_TRIVIAL(info) << "技记 钮 积己 吝";
+		LSendRequestSessionList = new std::deque<Session*>;
 	}
 
 	void NetworkManager::StartAccept()

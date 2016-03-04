@@ -13,6 +13,8 @@ namespace S4Framework
 		void	Run();
 		
 	private:
+		virtual void InitThread();
+
 		void	StartAccept();
 
 		boost::asio::ip::tcp::acceptor	mAcceptor;

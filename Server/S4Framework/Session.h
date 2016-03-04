@@ -1,7 +1,7 @@
 #pragma once
 
+#include <boost/bind.hpp>
 #include <boost/asio.hpp>
-#define MAX_BUF_SIZE	8092
 
 namespace S4Framework
 {
@@ -22,11 +22,13 @@ namespace S4Framework
 		UdpSocket&	GetUdpSocekt() { return mUdpSocket; }
 
 		void PostRecv();
-		void PostSend(const bool bImmediately, const std::size_t nSize, char* pData);
+		void PostSend(char* pData, const std::size_t nSize);
+
+		void FlushSend();
 
 	protected:
-		void RecvComplete();
-		void SendComplete();
+		void RecvComplete(const boost::system::error_code& error, size_t bytes_transferred);
+		void SendComplete(const boost::system::error_code& error, size_t bytes_transferred);
 
 		int				mSendPendingCount;
 		int				mBufferOffset;
@@ -39,9 +41,15 @@ namespace S4Framework
 		TcpSocket		mTcpSocket;
 		UdpSocket		mUdpSocket;
 
-		std::array<char, MAX_BUF_SIZE>		mRecvDataBuffer;
-		std::deque<std::shared_ptr<char>>	mSendDataQueue;
+		boost::asio::streambuf		mRecvDataBuffer;
+		boost::asio::streambuf		mSendDataBuffer;
 
-		boost::asio::strand					mSendSyncWrapper;
+		typedef boost::asio::io_service Dispatcher;
+		Dispatcher&		mDispatcher;
+
+		typedef boost::asio::strand SyncWrapper;
+		SyncWrapper		mSendSyncWrapper;
 	};
+
+	extern thread_local std::deque<Session*>* LSendRequestSessionList;
 }
