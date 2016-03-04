@@ -3,11 +3,11 @@
 
 namespace S4Framework
 {
-	Session::Session(int sessionID, boost::asio::io_service& ioService)
+	Session::Session(int sessionID, boost::asio::io_service& dispatcher)
 		: mSessionID( sessionID )
-		, mTcpSocket( ioService )
-		, mUdpSocket( ioService )
-		, mSendSyncWrapper( ioService )
+		, mTcpSocket( dispatcher )
+		, mUdpSocket( dispatcher )
+		, mSendSyncWrapper( dispatcher )
 	{
 	}
 	

@@ -28,6 +28,12 @@ public:
 	}
 	virtual ~Test() {}
 
+	void Reset()
+	{
+		mCount = 0;
+		mHeartBeat = 0;
+	}
+
 	void Start(int heartbeat)
 	{
 		mHeartBeat = heartbeat;
@@ -37,9 +43,21 @@ public:
 
 	void OnTick()
 	{
+		++mCount;
 		if (mHeartBeat > 0)
 		{
-			BOOST_LOG_TRIVIAL(info) << "카운트 : " << ++mCount;
+			if ( rand() % 1000 > 998 )
+			{
+				BOOST_LOG_TRIVIAL(info) << "Thread ID : " << GetCurrentThreadId() << " / 카운트 : " << mCount;
+
+				DoSync(&Test::Reset);
+
+				int heartBeat = rand() % 500 + 500;
+				S4Framework::DoSyncAfter(10, GetSharedFromThis<Test>(), &Test::Start, heartBeat);
+
+				return;
+			}
+
 			S4Framework::DoSyncAfter(mHeartBeat, GetSharedFromThis<Test>(), &Test::OnTick);
 		}
 	}
@@ -58,8 +76,14 @@ int main()
 	
 	GLogicPool = std::make_unique<S4Framework::ConcurrentJobManager>();
 
-	auto test = std::make_shared<Test>(*GLogicPool);
-	S4Framework::DoSyncAfter(10, test, &Test::Start, 1000);
+	for (std::size_t i = 0; i < 3000; ++i)
+	{
+		auto t1 = std::make_shared<Test>(*GLogicPool);
+		t1->DoSync(&Test::Reset);
+
+		int heartBeat = rand() % 500 + 500;
+		S4Framework::DoSyncAfter(10, t1, &Test::Start, heartBeat);
+	}
 
 	GNetworkManager = std::make_unique<S4Framework::NetworkManager>((PORT_NUM));
 	GNetworkManager->Run();

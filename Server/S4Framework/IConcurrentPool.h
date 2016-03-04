@@ -31,17 +31,13 @@ namespace S4Framework
 
 		typedef boost::asio::io_service Dispatcher;
 		Dispatcher& GetDispatcher() { return mDispatcher; }
-
-		typedef boost::asio::steady_timer Timer;
-		Timer& GetTimer() { return mTimer; }
-
+		
 		virtual void Init();
 
 	protected:
 		Dispatcher			mDispatcher;
 		boost::thread_group	mGroup;
-		Timer				mTimer;
-
+		
 		std::shared_ptr<boost::asio::io_service::work> mWork;
 		std::size_t	mPoolSize;
 	};

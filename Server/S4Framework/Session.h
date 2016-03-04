@@ -8,7 +8,7 @@ namespace S4Framework
 	class Session
 	{
 	public:
-		Session(int sessionID, boost::asio::io_service& io_service);
+		Session(int sessionID, boost::asio::io_service& dispatcher);
 		~Session();
 
 		void	Reset();
