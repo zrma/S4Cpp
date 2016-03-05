@@ -1,7 +1,10 @@
 #include "stdafx.h"
-#include "Session.h"
 
 #include <boost/asio/streambuf.hpp>
+
+#include "Session.h"
+#include "Log.h"
+#include "Exception.h"
 
 #define MAX_BUF_SIZE	8092
 
@@ -78,9 +81,90 @@ namespace S4Framework
 		mDispatcher.post(task);
 	}
 
+	void Session::AddRefCount()
+	{
+		CRASH_ASSERT(InterlockedIncrement(&mRefCount) > 0);
+	}
+
+	void Session::SubRefCount()
+	{
+		long ret = InterlockedDecrement(&mRefCount);
+		CRASH_ASSERT(ret >= 0);
+
+		if (ret == 0)
+		{
+			OnRelease();
+		}
+	}
+
 	void Session::RecvComplete(const boost::system::error_code& error, size_t bytes_transferred)
 	{
+		if (error)
+		{
+			if (error == boost::asio::error::eof)
+			{
+				BOOST_LOG_TRIVIAL(info) << "클라이언트 연결 종료";
+			}
+			else
+			{
+				BOOST_LOG_TRIVIAL(error) << "Session RecvComplete error [" << error.value() << "] " << error.message();
+			}
 
+			SubRefCount();
+		}
+		else
+		{
+			if (bytes_transferred > 0 )
+			{
+				mRecvDataBuffer.commit(bytes_transferred);
+			}
+
+			// boost::asio::streambuf::const_buffers_type bufs = mRecvDataBuffer.data();
+			//	std::string data(boost::asio::buffers_begin(bufs), boost::asio::buffers_end(bufs));
+			
+			// mRecvDataBuffer.consume(size);
+			// trace(boost::str(boost::format("Still on buffer %d bytes") % _read_buf.size()));
+
+			/*
+			memcpy(&m_PacketBuffer[m_nPacketBufferMark], m_ReceiveBuffer.data(), bytes_transferred);
+
+			int nPacketData = m_nPacketBufferMark + bytes_transferred;
+			int nReadData = 0;
+
+			while (nPacketData > 0)
+			{
+				if (nPacketData < sizeof(PACKET_HEADER))
+				{
+					break;
+				}
+
+				PACKET_HEADER* pHeader = (PACKET_HEADER*)&m_PacketBuffer[nReadData];
+
+				if (pHeader->nSize <= nPacketData)
+				{
+					m_pServer->ProcessPacket(m_nSessionID, &m_PacketBuffer[nReadData]);
+
+					nPacketData -= pHeader->nSize;
+					nReadData += pHeader->nSize;
+				}
+				else
+				{
+					break;
+				}
+			}
+
+			if (nPacketData > 0)
+			{
+				char TempBuffer[MAX_RECEIVE_BUFFER_LEN] = { 0, };
+				memcpy(&TempBuffer[0], &m_PacketBuffer[nReadData], nPacketData);
+				memcpy(&m_PacketBuffer[0], &TempBuffer[0], nPacketData);
+			}
+
+			m_nPacketBufferMark = nPacketData;
+
+			*/
+			PostRecv();
+		}
 	}
 
 	void Session::SendComplete(const boost::system::error_code& error, size_t bytes_transferred)

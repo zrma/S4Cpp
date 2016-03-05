@@ -44,9 +44,9 @@ namespace S4Framework
 			);
 		*/
 
-		while (true)
+		/*while (true)
 		{
 			Sleep(1000);
-		}
+		}*/
 	}
 }

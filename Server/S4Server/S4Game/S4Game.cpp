@@ -77,19 +77,19 @@ int main()
 	GLogicPool = std::make_unique<S4Framework::ConcurrentJobManager>();
 	GLogicPool->Init();
 
-	for (std::size_t i = 0; i < 3000; ++i)
+	/*for (std::size_t i = 0; i < 3000; ++i)
 	{
 		auto t1 = std::make_shared<Test>(*GLogicPool);
 		t1->DoSync(&Test::Reset);
 
 		int heartBeat = rand() % 500 + 500;
 		S4Framework::DoSyncAfter(10, t1, &Test::Start, heartBeat);
-	}
+	}*/
 
 	GNetworkManager = std::make_unique<S4Framework::NetworkManager>(PORT_NUM);
 	GNetworkManager->Init();
 	GNetworkManager->Run();
-	
+		
 	BOOST_LOG_TRIVIAL(info) << "네트워크 접속 종료";
 	getchar();
 

@@ -13,7 +13,7 @@ namespace S4Framework
 		void	Run();
 		
 	private:
-		virtual void InitThread();
+		virtual void InitThread() override;
 
 		void	StartAccept();
 
