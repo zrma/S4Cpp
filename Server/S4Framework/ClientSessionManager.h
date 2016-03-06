@@ -1,31 +1,41 @@
 #pragma once
 
+#include <boost/asio.hpp>
+
 namespace S4Framework
 {
 	class ClientSession;
-	typedef std::shared_ptr<ClientSession> ClientSessionPtr;
-
 	class ClientSessionManager
 	{
 	public:
-		ClientSessionManager() {}
-		~ClientSessionManager() {}
+		ClientSessionManager(int port, std::size_t size, boost::asio::io_service& dispatcher)
+			: mMaxConnection(size)
+			, mDispatcher(dispatcher)
+			, mAcceptor(dispatcher, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port))
+			, mWrapper(dispatcher) {}
+		~ClientSessionManager();
 
 		void PrepareClientSession();
 		bool AcceptClientSession();
-				
-		void ReturnClientSession(ClientSessionPtr client);
+
+		void ReturnClientSession(ClientSession* client);
 
 	private:
-		typedef std::list<ClientSessionPtr> ClientList;
+		typedef boost::asio::strand SyncWrapper;
+		SyncWrapper mWrapper;
+		
+		typedef std::list<ClientSession*> ClientList;
 		ClientList mFreeSessionList;
 
-		// TASK 락 구성하기
-		// FastSpinlock mLock;
+		uint64_t mCurrentIssueCount = 0;
+		uint64_t mCurrentReturnCount = 0;
 
-		uint64_t mCurrentIssueCount;
-		uint64_t mCurrentReturnCount;
+		std::size_t mMaxConnection = 0;
+
+		boost::asio::io_service&		mDispatcher;
+		boost::asio::ip::tcp::acceptor	mAcceptor;
+		bool	mIsAcceptable = true;
 	};
 
-	extern std::shared_ptr<ClientSessionManager> GClientSessionManager;
+	extern std::unique_ptr<ClientSessionManager> GClientSessionManager;
 }

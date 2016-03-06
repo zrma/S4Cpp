@@ -32,7 +32,7 @@ namespace S4Framework
 			InterlockedPushEntrySList(&GThreadCallElapsedRecord, (PSLIST_ENTRY)LThreadCallElapsedRecord);
 
 			InitThread();
-			mDispatcher.run();
+			Run();
 		};
 
 		for (std::size_t i = 0; i < mPoolSize; ++i)
@@ -40,4 +40,10 @@ namespace S4Framework
 			mGroup.create_thread(f);
 		}
 	}
+
+	void IConcurrentPool::Run()
+	{
+		mDispatcher.run();
+	}
+
 }

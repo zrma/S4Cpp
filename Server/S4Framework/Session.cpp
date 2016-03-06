@@ -10,7 +10,7 @@
 
 namespace S4Framework
 {
-	thread_local std::deque<Session*>* LSendRequestSessionList = nullptr;
+	thread_local std::shared_ptr<SessionListPtr> LSendRequestSessionList;
 
 	Session::Session(int sessionID, boost::asio::io_service& dispatcher)
 		: mSessionID(sessionID)
@@ -48,6 +48,9 @@ namespace S4Framework
 
 	void Session::PostRecv()
 	{
+		// TASK - 임시
+		AddRefCount();
+
 		boost::asio::streambuf::mutable_buffers_type bufs = mRecvDataBuffer.prepare(MAX_BUF_SIZE);
 
 		mTcpSocket.async_read_some(
@@ -56,12 +59,14 @@ namespace S4Framework
 			);
 	}
 
-	void Session::PostSend(char* pData, const std::size_t nSize)
+	void Session::PostSend(const char* pData, const std::size_t nSize)
 	{
 		auto f = [=]()
 		{
 			std::ostream os(&mSendDataBuffer);
 			os.write(pData, nSize);
+
+			LSendRequestSessionList->push_back(this);
 		};
 		auto task = mSendSyncWrapper.wrap(f);
 		mDispatcher.post(task);
@@ -71,6 +76,9 @@ namespace S4Framework
 	{
 		auto f = [=]()
 		{
+			// TASK - 임시
+			AddRefCount();
+
 			boost::asio::async_write(mTcpSocket, mSendDataBuffer.data(),
 				boost::bind(&Session::SendComplete, this,
 					boost::asio::placeholders::error,
@@ -99,6 +107,9 @@ namespace S4Framework
 
 	void Session::RecvComplete(const boost::system::error_code& error, size_t bytes_transferred)
 	{
+		// TASK - 임시
+		SubRefCount();
+
 		if (error)
 		{
 			if (error == boost::asio::error::eof)
@@ -109,15 +120,22 @@ namespace S4Framework
 			{
 				BOOST_LOG_TRIVIAL(error) << "Session RecvComplete error [" << error.value() << "] " << error.message();
 			}
-
-			SubRefCount();
 		}
 		else
 		{
 			if (bytes_transferred > 0 )
 			{
+				// BOOST_LOG_TRIVIAL(info) << bytes_transferred << "바이트 받음";
 				mRecvDataBuffer.commit(bytes_transferred);
 			}
+
+			// TASK - echo test
+						
+			const char* bufPtr = boost::asio::buffer_cast<const char*>(mRecvDataBuffer.data());
+			size_t len = mRecvDataBuffer.size();
+			PostSend(bufPtr, len);
+			
+			mRecvDataBuffer.consume(len);
 
 			// boost::asio::streambuf::const_buffers_type bufs = mRecvDataBuffer.data();
 			//	std::string data(boost::asio::buffers_begin(bufs), boost::asio::buffers_end(bufs));
@@ -169,7 +187,32 @@ namespace S4Framework
 
 	void Session::SendComplete(const boost::system::error_code& error, size_t bytes_transferred)
 	{
+		// TASK - 임시
+		SubRefCount();
 
+		if (error)
+		{
+			if (error == boost::asio::error::eof)
+			{
+				BOOST_LOG_TRIVIAL(info) << "클라이언트 연결 종료";
+			}
+			else
+			{
+				BOOST_LOG_TRIVIAL(error) << "Session SendComplete error [" << error.value() << "] " << error.message();
+			}
+		}
+		else
+		{
+			if (bytes_transferred > 0)
+			{
+				auto f = [=]()
+				{
+					// BOOST_LOG_TRIVIAL(info) << bytes_transferred << "바이트 보냄";
+					mSendDataBuffer.consume(bytes_transferred);
+				};
+				auto task = mSendSyncWrapper.wrap(f);
+				mDispatcher.post(task);
+			}
+		}
 	}
-
 }

@@ -9,7 +9,7 @@ namespace S4Framework
 	{
 	public:
 		Session(int sessionID, boost::asio::io_service& dispatcher);
-		~Session();
+		virtual ~Session();
 
 		void	Reset();
 
@@ -22,7 +22,7 @@ namespace S4Framework
 		UdpSocket&	GetUdpSocekt() { return mUdpSocket; }
 
 		void PostRecv();
-		void PostSend(char* pData, const std::size_t nSize);
+		void PostSend(const char* pData, const std::size_t nSize);
 
 		void FlushSend();
 
@@ -57,5 +57,6 @@ namespace S4Framework
 		SyncWrapper		mSendSyncWrapper;
 	};
 
-	extern thread_local std::deque<Session*>* LSendRequestSessionList;
+	typedef std::deque<Session*> SessionListPtr;
+	extern thread_local std::shared_ptr<SessionListPtr> LSendRequestSessionList;
 }

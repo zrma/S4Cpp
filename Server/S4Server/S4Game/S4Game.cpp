@@ -14,7 +14,8 @@
 #pragma comment(lib, "S4Framework.lib")
 #pragma comment(lib, "Dbghelp.lib")
 
-const int PORT_NUM = 35555;
+const int PORT_NUM		= 35555;
+const int MAX_SESSIONS	= 10000;
 
 std::shared_ptr<S4Framework::NetworkManager> GNetworkManager;
 std::shared_ptr<S4Framework::ConcurrentJobManager> GLogicPool;
@@ -88,8 +89,8 @@ int main()
 
 	GNetworkManager = std::make_unique<S4Framework::NetworkManager>(PORT_NUM);
 	GNetworkManager->Init();
-	GNetworkManager->Run();
-		
+	GNetworkManager->StartAccept(MAX_SESSIONS);
+			
 	BOOST_LOG_TRIVIAL(info) << "네트워크 접속 종료";
 	getchar();
 

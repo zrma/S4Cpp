@@ -2,6 +2,8 @@
 
 #include "IConcurrentPool.h"
 
+#define MAX_CONNECTION	10000
+
 namespace S4Framework
 {	
 	class NetworkManager : public IConcurrentPool
@@ -10,16 +12,13 @@ namespace S4Framework
 		NetworkManager(int port, std::size_t size = MAX_IO_THREAD);
 		~NetworkManager();
 
-		void	Run();
-		
+		void	StartAccept(std::size_t size = MAX_CONNECTION);
 	private:
 		virtual void InitThread() override;
+		virtual void Run() override;
 
-		void	StartAccept();
+		void	DoSendJob();
 
-		boost::asio::ip::tcp::acceptor	mAcceptor;
-
-		bool	mIsAccepting = false;
-		int		mSeqNumber = 0;
+		int		mPort = 0;
 	};
 };

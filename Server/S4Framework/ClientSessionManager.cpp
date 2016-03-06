@@ -1,23 +1,67 @@
 #include "stdafx.h"
 #include "ClientSessionManager.h"
+#include "ClientSession.h"
+#include "ThreadLocal.h"
+#include "Exception.h"
 
 namespace S4Framework
 {
-	std::shared_ptr<ClientSessionManager> GClientSessionManager;
+	std::unique_ptr<ClientSessionManager> GClientSessionManager;
+
+	ClientSessionManager::~ClientSessionManager()
+	{
+		for (auto& toBeDelete : mFreeSessionList )
+		{
+			delete toBeDelete;
+		}
+		mFreeSessionList.clear();
+	}
 
 	void ClientSessionManager::PrepareClientSession()
 	{
-		// TASK 클라이언트 세션 준비
+		CRASH_ASSERT(LThreadType == THREAD_MAIN);
+
+		for (int i = 0; i < mMaxConnection; ++i)
+		{
+			ClientSession* client = new ClientSession(i, mAcceptor.get_io_service());
+			mFreeSessionList.push_back(client);
+		}
 	}
 
 	bool ClientSessionManager::AcceptClientSession()
 	{
-		// TASK 클라이언트 접속 시작
-		return false;
+		auto f = [=]
+		{
+			while (mCurrentIssueCount - mCurrentReturnCount < mMaxConnection)
+			{
+				ClientSession* newClient = mFreeSessionList.back();
+				mFreeSessionList.pop_back();
+
+				++mCurrentIssueCount;
+
+				newClient->AddRefCount(); ///< refcount +1 for issuing 
+				newClient->PostAccept(mAcceptor);
+			}
+		};
+		auto task = mWrapper.wrap(f);
+		mDispatcher.post(task);
+		
+		return true;
 	}
 
-	void ClientSessionManager::ReturnClientSession(ClientSessionPtr client)
+	void ClientSessionManager::ReturnClientSession(ClientSession* client)
 	{
-		// TASK 세션 반환 구현
+		auto f = [=]
+		{
+			CRASH_ASSERT(client->mConnected == 0 && client->mRefCount == 0);
+
+			client->Reset();
+
+			mFreeSessionList.push_back(client);
+
+			++mCurrentReturnCount;
+		};
+		auto task = mWrapper.wrap(f);
+		mDispatcher.post(task);
 	}
 }

@@ -33,9 +33,9 @@ namespace S4Framework
 		Dispatcher& GetDispatcher() { return mDispatcher; }
 		
 		void Init();
-
 	protected:
 		virtual void InitThread() {};
+		virtual void Run();
 
 		Dispatcher			mDispatcher;
 		boost::thread_group	mGroup;
