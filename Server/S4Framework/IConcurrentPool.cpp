@@ -14,6 +14,7 @@ namespace S4Framework
 	IConcurrentPool::~IConcurrentPool()
 	{
 		mWork.reset();
+		mDispatcher.stop();
 		mGroup.join_all();
 	}
 

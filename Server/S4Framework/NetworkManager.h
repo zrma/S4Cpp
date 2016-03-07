@@ -20,5 +20,6 @@ namespace S4Framework
 		void	DoSendJob();
 
 		int		mPort = 0;
+		bool	mIsContinue = true;
 	};
 };

@@ -15,11 +15,9 @@ namespace S4Framework
 
 		int		GetSessionID() { return mSessionID; }
 		
-		typedef boost::asio::ip::tcp::socket TcpSocket;
-		typedef boost::asio::ip::udp::socket UdpSocket;
-
-		TcpSocket&	GetTcpSocket() { return mTcpSocket; }
-		UdpSocket&	GetUdpSocekt() { return mUdpSocket; }
+		typedef boost::asio::ip::tcp::socket Socket;
+		
+		Socket&	GetSocket() { return mSocket; }
 
 		void PostRecv();
 		void PostSend(const char* pData, const std::size_t nSize);
@@ -45,9 +43,7 @@ namespace S4Framework
 		volatile long	mConnected = 0;
 
 		int				mSessionID = -1;
-
-		TcpSocket		mTcpSocket;
-		UdpSocket		mUdpSocket;
+		Socket			mSocket;
 
 		boost::asio::streambuf		mRecvDataBuffer;
 		boost::asio::streambuf		mSendDataBuffer;

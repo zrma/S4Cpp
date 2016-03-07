@@ -21,8 +21,6 @@ namespace S4Framework
 	{
 		BOOST_LOG_TRIVIAL(info) << "세션 큐 생성 중";
 		LSendRequestSessionList = std::make_shared<SessionListPtr>();
-
-		auto timer = std::make_shared<boost::asio::steady_timer>(mDispatcher);
 	}
 
 	void NetworkManager::Run()
@@ -35,14 +33,22 @@ namespace S4Framework
 
 	void NetworkManager::StartAccept(std::size_t size)
 	{
-		GClientSessionManager = std::make_unique<ClientSessionManager>(mPort, size, mDispatcher);
-		GClientSessionManager->PrepareClientSession();
+		GClientSessionManager = std::make_unique<ClientSessionManager>(mPort, mDispatcher);
+		GClientSessionManager->PrepareClientSession(size);
 
 		BOOST_LOG_TRIVIAL(info) << "클라이언트 접속 대기";
 
-		while (GClientSessionManager->AcceptClientSession())
+		auto startTime = GetTickCount64();
+		GClientSessionManager->AcceptClientSession();
+
+		while (mIsContinue)
 		{
 			Sleep(100);
+
+			if (startTime + 30000 < GetTickCount64())
+			{
+				mIsContinue = false;
+			}
 		}
 	}
 

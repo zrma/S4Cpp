@@ -8,24 +8,25 @@ namespace S4Framework
 	class ClientSessionManager
 	{
 	public:
-		ClientSessionManager(int port, std::size_t size, boost::asio::io_service& dispatcher)
-			: mMaxConnection(size)
-			, mDispatcher(dispatcher)
+		ClientSessionManager(int port, boost::asio::io_service& dispatcher)
+			: mDispatcher(dispatcher)
 			, mAcceptor(dispatcher, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port))
 			, mWrapper(dispatcher) {}
 		~ClientSessionManager();
 
-		void PrepareClientSession();
-		bool AcceptClientSession();
-
-		void ReturnClientSession(ClientSession* client);
+		void PrepareClientSession(std::size_t maxConnection);
+		void AcceptClientSession();
+		void ReturnClientSession(const int sessionID);
 
 	private:
+		void AcceptComplete(ClientSession* client, const boost::system::error_code& error);
+
 		typedef boost::asio::strand SyncWrapper;
 		SyncWrapper mWrapper;
-		
-		typedef std::list<ClientSession*> ClientList;
-		ClientList mFreeSessionList;
+
+		typedef std::vector<ClientSession*> ClientList;
+		ClientList mClientSessionList;
+		std::deque<int> mClientSessionQueue;
 
 		uint64_t mCurrentIssueCount = 0;
 		uint64_t mCurrentReturnCount = 0;
@@ -34,7 +35,7 @@ namespace S4Framework
 
 		boost::asio::io_service&		mDispatcher;
 		boost::asio::ip::tcp::acceptor	mAcceptor;
-		bool	mIsAcceptable = true;
+		bool	mIsAccepting = true;
 	};
 
 	extern std::unique_ptr<ClientSessionManager> GClientSessionManager;

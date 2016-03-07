@@ -15,33 +15,42 @@ namespace S4Framework
 	Session::Session(int sessionID, boost::asio::io_service& dispatcher)
 		: mSessionID(sessionID)
 		, mDispatcher(dispatcher)
-		, mTcpSocket(dispatcher)
-		, mUdpSocket(dispatcher)
+		, mSocket(dispatcher)
 		, mSendSyncWrapper(dispatcher)
 	{
 	}
 	
 	Session::~Session()
 	{
+		mRefCount = 0;
+		mConnected = 0;
+
+		mSendPendingCount = 0;
+
+		if (mSocket.is_open())
+		{
+			mSocket.close();
+		}
 	}
 
 	void Session::Reset()
 	{
-		mSessionID	= -1;
 		mRefCount	= 0;
 		mConnected	= 0;
 
 		mSendPendingCount = 0;
 
-		mTcpSocket.close();
-		mUdpSocket.close();
+		if (mSocket.is_open())
+		{
+			mSocket.close();
+		}
 
-		size_t size = mRecvDataBuffer.size();
+		auto size = mRecvDataBuffer.size();
 		mRecvDataBuffer.consume(size);
 		
 		auto f = [=]()
 		{
-			size_t size = mSendDataBuffer.size();
+			auto size = mSendDataBuffer.size();
 			mSendDataBuffer.consume(size);
 		};
 		auto task = mSendSyncWrapper.wrap(f);
@@ -53,9 +62,11 @@ namespace S4Framework
 		// TASK - 임시
 		AddRefCount();
 
+		BOOST_LOG_TRIVIAL(info) << "Post Recv RefCount : " << mRefCount;
+
 		boost::asio::streambuf::mutable_buffers_type bufs = mRecvDataBuffer.prepare(MAX_BUF_SIZE);
 
-		mTcpSocket.async_read_some(
+		mSocket.async_read_some(
 			bufs,
 			boost::bind(&Session::RecvComplete, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred)
 			);
@@ -92,9 +103,11 @@ namespace S4Framework
 			// TASK - 임시
 			AddRefCount();
 
+			BOOST_LOG_TRIVIAL(info) << "Flush Send RefCount : " << mRefCount;
+
 			++mSendPendingCount;
 
-			boost::asio::async_write(mTcpSocket, mSendDataBuffer.data(),
+			boost::asio::async_write(mSocket, mSendDataBuffer.data(),
 				boost::bind(&Session::SendComplete, this,
 					boost::asio::placeholders::error,
 					boost::asio::placeholders::bytes_transferred)
@@ -122,7 +135,7 @@ namespace S4Framework
 
 	void Session::DisconnectRequest()
 	{
-		mTcpSocket.close();
+		mSocket.close();
 	}
 
 	void Session::DisconnectComplete(const boost::system::error_code& error, size_t bytes_transferred)
@@ -139,12 +152,13 @@ namespace S4Framework
 	{
 		// TASK - 임시
 		SubRefCount();
+		BOOST_LOG_TRIVIAL(info) << "Recv Complete RefCount : " << mRefCount;
 
 		if (error)
 		{
 			if (error == boost::asio::error::eof)
 			{
-				BOOST_LOG_TRIVIAL(info) << "클라이언트 연결 종료";
+				// BOOST_LOG_TRIVIAL(info) << "클라이언트 연결 종료";
 			}
 			else
 			{
@@ -157,7 +171,7 @@ namespace S4Framework
 		{
 			if (bytes_transferred > 0 )
 			{
-				// BOOST_LOG_TRIVIAL(info) << bytes_transferred << "바이트 받음";
+				// BOOST_LOG_TRIVIAL(info) << "RefCount : " << mRefCount;
 				mRecvDataBuffer.commit(bytes_transferred);
 			}
 
@@ -221,12 +235,13 @@ namespace S4Framework
 	{
 		// TASK - 임시
 		SubRefCount();
+		BOOST_LOG_TRIVIAL(info) << "Send Complete RefCount : " << mRefCount;
 
 		if (error)
 		{
 			if (error == boost::asio::error::eof)
 			{
-				BOOST_LOG_TRIVIAL(info) << "클라이언트 연결 종료";
+				// BOOST_LOG_TRIVIAL(info) << "클라이언트 연결 종료";
 			}
 			else
 			{
@@ -241,7 +256,7 @@ namespace S4Framework
 			{
 				auto f = [=]()
 				{
-					// BOOST_LOG_TRIVIAL(info) << bytes_transferred << "바이트 보냄";
+					// BOOST_LOG_TRIVIAL(info) << "Recv Complete RefCount : " << mRefCount;
 					mSendDataBuffer.consume(bytes_transferred);
 
 					--mSendPendingCount;

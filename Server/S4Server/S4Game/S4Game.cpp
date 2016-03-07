@@ -70,6 +70,12 @@ private:
 
 int main()
 {
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
+	// 메모리 릭을 체크하려면 아래의 #### 칸에 릭 난 곳 { 숫자 } 표기 된 숫자를 넣어주면 됩니다.
+	// _CrtSetBreakAlloc( #### );
+	// _CrtSetBreakAlloc(371);
+
 	/// for dump on crash
 	SetUnhandledExceptionFilter(S4Framework::ExceptionFilter);
 
@@ -90,6 +96,9 @@ int main()
 	GNetworkManager = std::make_unique<S4Framework::NetworkManager>(PORT_NUM);
 	GNetworkManager->Init();
 	GNetworkManager->StartAccept(MAX_SESSIONS);
+
+	GNetworkManager.reset();
+	GLogicPool.reset();
 			
 	BOOST_LOG_TRIVIAL(info) << "네트워크 접속 종료";
 	getchar();
