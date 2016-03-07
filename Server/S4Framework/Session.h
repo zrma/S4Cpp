@@ -29,12 +29,14 @@ namespace S4Framework
 		void AddRefCount();
 		void SubRefCount();
 
-		// virtual void OnDisconnect(DisconnectReason dr) = 0;
+		void DisconnectRequest(/*DisconnectReason dr*/);
+		virtual void OnDisconnect(/*DisconnectReason dr*/) = 0;
 		virtual void OnRelease() = 0;
 
 	protected:
 		void RecvComplete(const boost::system::error_code& error, size_t bytes_transferred);
 		void SendComplete(const boost::system::error_code& error, size_t bytes_transferred);
+		void DisconnectComplete(const boost::system::error_code& error, size_t bytes_transferred);
 
 		int				mSendPendingCount;
 		int				mBufferOffset;

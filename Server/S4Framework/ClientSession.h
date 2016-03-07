@@ -13,7 +13,8 @@ namespace S4Framework
 
 		void PostAccept(boost::asio::ip::tcp::acceptor& acceptor);
 
-		virtual void OnRelease();
+		virtual void OnDisconnect() override;
+		virtual void OnRelease() override;
 
 	private:
 		void AcceptComplete(const boost::system::error_code& error);

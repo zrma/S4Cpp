@@ -31,6 +31,8 @@ namespace S4Framework
 		mRefCount	= 0;
 		mConnected	= 0;
 
+		mSendPendingCount = 0;
+
 		mTcpSocket.close();
 		mUdpSocket.close();
 
@@ -76,8 +78,21 @@ namespace S4Framework
 	{
 		auto f = [=]()
 		{
+			// TASK 
+			if (mSendDataBuffer.size() == 0)
+			{
+				return;
+			}
+
+			// TASK
+			if (mSendPendingCount > 0)
+			{
+				return;
+			}
 			// TASK - 임시
 			AddRefCount();
+
+			++mSendPendingCount;
 
 			boost::asio::async_write(mTcpSocket, mSendDataBuffer.data(),
 				boost::bind(&Session::SendComplete, this,
@@ -105,6 +120,21 @@ namespace S4Framework
 		}
 	}
 
+	void Session::DisconnectRequest()
+	{
+		mTcpSocket.close();
+	}
+
+	void Session::DisconnectComplete(const boost::system::error_code& error, size_t bytes_transferred)
+	{
+
+	}
+
+	void Session::OnDisconnect(/*DisconnectReason dr*/)
+	{
+
+	}
+
 	void Session::RecvComplete(const boost::system::error_code& error, size_t bytes_transferred)
 	{
 		// TASK - 임시
@@ -120,6 +150,8 @@ namespace S4Framework
 			{
 				BOOST_LOG_TRIVIAL(error) << "Session RecvComplete error [" << error.value() << "] " << error.message();
 			}
+
+			SubRefCount();
 		}
 		else
 		{
@@ -200,6 +232,8 @@ namespace S4Framework
 			{
 				BOOST_LOG_TRIVIAL(error) << "Session SendComplete error [" << error.value() << "] " << error.message();
 			}
+
+			SubRefCount();
 		}
 		else
 		{
@@ -209,6 +243,8 @@ namespace S4Framework
 				{
 					// BOOST_LOG_TRIVIAL(info) << bytes_transferred << "바이트 보냄";
 					mSendDataBuffer.consume(bytes_transferred);
+
+					--mSendPendingCount;
 				};
 				auto task = mSendSyncWrapper.wrap(f);
 				mDispatcher.post(task);
