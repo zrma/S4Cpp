@@ -55,7 +55,7 @@ namespace S4Framework
 		{
 			ClientSession* client = new ClientSession(i, mAcceptor.get_io_service());
 			mClientSessionList[i] = client;
-			mClientSessionQueue.push_back(i);
+			mClientSessionQueue.insert(i);
 		}
 	}
 
@@ -70,8 +70,8 @@ namespace S4Framework
 			}
 
 			mIsAccepting = true;
-			int sessionID = mClientSessionQueue.front();
-			mClientSessionQueue.pop_front();
+			int sessionID = *mClientSessionQueue.begin();
+			mClientSessionQueue.erase(sessionID);
 
 			if (mClientSessionList.size() > sessionID && mClientSessionList[sessionID])
 			{
@@ -95,20 +95,23 @@ namespace S4Framework
 		if (!error)
 		{
 			std::string ip = boost::lexical_cast<std::string>(client->GetSocket().remote_endpoint());
-			BOOST_LOG_TRIVIAL(info) << "클라이언트 접속 성공. " << client->GetSessionID() << ":" << ip;
+			// BOOST_LOG_TRIVIAL(info) << "클라이언트 접속 성공. " << client->GetSessionID() << ":" << ip;
+			std::cout << "클라이언트 접속 성공. " << client->GetSessionID() << ":" << ip << std::endl;
 
+			client->AcceptComplete();
 			client->PostRecv();
 			AcceptClientSession();
 		}
 		else
 		{
+			// BOOST_LOG_TRIVIAL(error) << "error No: " << error.value() << " error Message: " << error.message();
 			std::cout << "error No: " << error.value() << " error Message: " << error.message() << std::endl;
 		}
 	}
 
 	void ClientSessionManager::ReturnClientSession(const int sessionID)
 	{
-		auto f = [=]
+		auto f = [sessionID, this]
 		{
 			if (mClientSessionList.size() > sessionID && mClientSessionList[sessionID])
 			{
@@ -116,10 +119,11 @@ namespace S4Framework
 				CRASH_ASSERT(client->mConnected == 0 && client->mRefCount == 0);
 
 				std::string ip = boost::lexical_cast<std::string>(client->GetSocket().remote_endpoint());
-				BOOST_LOG_TRIVIAL(info) << "클라이언트 접속 종료. " << client->GetSessionID() << ":" << ip;
-
+				// BOOST_LOG_TRIVIAL(info) << "클라이언트 접속 종료. " << client->GetSessionID() << ":" << ip;
+				std::cout << "클라이언트 접속 종료. " << client->GetSessionID() << ":" << ip << std::endl;
+				
 				client->Reset();
-				mClientSessionQueue.push_back(sessionID);
+				mClientSessionQueue.insert(sessionID);
 
 				++mCurrentReturnCount;
 

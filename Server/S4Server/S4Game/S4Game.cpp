@@ -49,7 +49,8 @@ public:
 		{
 			if ( rand() % 1000 > 998 )
 			{
-				BOOST_LOG_TRIVIAL(info) << "Thread ID : " << GetCurrentThreadId() << " / 카운트 : " << mCount;
+				// BOOST_LOG_TRIVIAL(info) << "Thread ID : " << GetCurrentThreadId() << " / 카운트 : " << mCount;
+				std::cout << "Thread ID : " << GetCurrentThreadId() << " / 카운트 : " << mCount << std::endl;
 
 				DoSync(&Test::Reset);
 
@@ -74,7 +75,7 @@ int main()
 
 	// 메모리 릭을 체크하려면 아래의 #### 칸에 릭 난 곳 { 숫자 } 표기 된 숫자를 넣어주면 됩니다.
 	// _CrtSetBreakAlloc( #### );
-	// _CrtSetBreakAlloc(371);
+	// _CrtSetBreakAlloc(348);
 
 	/// for dump on crash
 	SetUnhandledExceptionFilter(S4Framework::ExceptionFilter);
@@ -100,7 +101,8 @@ int main()
 	GNetworkManager.reset();
 	GLogicPool.reset();
 			
-	BOOST_LOG_TRIVIAL(info) << "네트워크 접속 종료";
+	// BOOST_LOG_TRIVIAL(info) << "네트워크 접속 종료";
+	std::cout << "네트워크 접속 종료" << std::endl;
 	getchar();
 
 	return 0;

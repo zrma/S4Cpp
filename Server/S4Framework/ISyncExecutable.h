@@ -63,7 +63,8 @@ namespace S4Framework
 			}
 			else
 			{
-				BOOST_LOG_TRIVIAL(error) << "DoSyncAfter() error [" << error.value() << "] " << error.message();
+				// BOOST_LOG_TRIVIAL(error) << "DoSyncAfter() error [" << error.value() << "] " << error.message();
+				std::cout << "DoSyncAfter() error [" << error.value() << "] " << error.message() << std::endl;
 			}
 		});
 	}

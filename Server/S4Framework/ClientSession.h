@@ -11,7 +11,9 @@ namespace S4Framework
 		ClientSession() = delete;
 		virtual ~ClientSession();
 
-		virtual void OnDisconnect() override;
+		void AcceptComplete();
+
+		virtual void OnDisconnect(DisconnectReason dr) override;
 		virtual void OnRelease() override;
 
 	private:

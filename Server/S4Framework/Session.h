@@ -5,6 +5,16 @@
 
 namespace S4Framework
 {
+	enum DisconnectReason
+	{
+		DR_NONE,
+		DR_ACTIVE,
+		DR_ONCONNECT_ERROR,
+		DR_IO_REQUEST_ERROR,
+		DR_COMPLETION_ERROR,
+		DR_SENDFLUSH_ERROR
+	};
+
 	class Session
 	{
 	public:
@@ -27,8 +37,9 @@ namespace S4Framework
 		void AddRefCount();
 		void SubRefCount();
 
-		void DisconnectRequest(/*DisconnectReason dr*/);
-		virtual void OnDisconnect(/*DisconnectReason dr*/) = 0;
+		bool IsConnected() const { return !!mConnected; }
+		void Disconnect(DisconnectReason dr);
+		virtual void OnDisconnect(DisconnectReason dr) = 0;
 		virtual void OnRelease() = 0;
 
 	protected:
@@ -55,6 +66,6 @@ namespace S4Framework
 		SyncWrapper		mSendSyncWrapper;
 	};
 
-	typedef std::deque<Session*> SessionListPtr;
+	typedef std::unordered_set<Session*> SessionListPtr;
 	extern thread_local std::shared_ptr<SessionListPtr> LSendRequestSessionList;
 }

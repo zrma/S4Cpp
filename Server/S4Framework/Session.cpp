@@ -44,26 +44,18 @@ namespace S4Framework
 		{
 			mSocket.close();
 		}
-
-		auto size = mRecvDataBuffer.size();
-		mRecvDataBuffer.consume(size);
-		
-		auto f = [=]()
-		{
-			auto size = mSendDataBuffer.size();
-			mSendDataBuffer.consume(size);
-		};
-		auto task = mSendSyncWrapper.wrap(f);
-		mDispatcher.post(task);
 	}
 
 	void Session::PostRecv()
 	{
+		if (!IsConnected())
+		{
+			return;
+		}
+
 		// TASK - 임시
 		AddRefCount();
-
-		BOOST_LOG_TRIVIAL(info) << "Post Recv RefCount : " << mRefCount;
-
+		
 		boost::asio::streambuf::mutable_buffers_type bufs = mRecvDataBuffer.prepare(MAX_BUF_SIZE);
 
 		mSocket.async_read_some(
@@ -74,12 +66,17 @@ namespace S4Framework
 
 	void Session::PostSend(const char* pData, const std::size_t nSize)
 	{
+		if (!IsConnected())
+		{
+			return;
+		}
+
 		auto f = [=]()
 		{
 			std::ostream os(&mSendDataBuffer);
 			os.write(pData, nSize);
 
-			LSendRequestSessionList->push_back(this);
+			LSendRequestSessionList->insert(this);
 		};
 		auto task = mSendSyncWrapper.wrap(f);
 		mDispatcher.post(task);
@@ -87,6 +84,12 @@ namespace S4Framework
 
 	void Session::FlushSend()
 	{
+		if (!IsConnected())
+		{
+			Disconnect(DR_SENDFLUSH_ERROR);
+			return;
+		}
+
 		auto f = [=]()
 		{
 			// TASK 
@@ -102,9 +105,7 @@ namespace S4Framework
 			}
 			// TASK - 임시
 			AddRefCount();
-
-			BOOST_LOG_TRIVIAL(info) << "Flush Send RefCount : " << mRefCount;
-
+			
 			++mSendPendingCount;
 
 			boost::asio::async_write(mSocket, mSendDataBuffer.data(),
@@ -125,47 +126,64 @@ namespace S4Framework
 	void Session::SubRefCount()
 	{
 		long ret = InterlockedDecrement(&mRefCount);
-		CRASH_ASSERT(ret >= 0);
+		// CRASH_ASSERT(ret >= 0);
 
-		if (ret == 0)
+		if (ret < 0)
+		{
+			std::cout << "Ref Count !!!!!!!!!!!!!!!!!!!!!!!!! " << ret << std::endl;
+		}
+
+		if (ret <= 0)
+		// if (ret == 0)
 		{
 			OnRelease();
 		}
 	}
 
-	void Session::DisconnectRequest()
+	void Session::Disconnect(DisconnectReason dr)
 	{
-		mSocket.close();
+		if (0 == InterlockedExchange(&mConnected, 0))
+		{
+			return;
+		}
+
+		auto size = mRecvDataBuffer.size();
+		mRecvDataBuffer.consume(size);
+
+		auto f = [=]()
+		{
+			auto size = mSendDataBuffer.size();
+			mSendDataBuffer.consume(size);
+		};
+		auto task = mSendSyncWrapper.wrap(f);
+		mDispatcher.post(task);
+
+		OnDisconnect(dr);
+
+		/// release refcount when added at issuing a session
+		SubRefCount();
 	}
-
-	void Session::DisconnectComplete(const boost::system::error_code& error, size_t bytes_transferred)
-	{
-
-	}
-
-	void Session::OnDisconnect(/*DisconnectReason dr*/)
-	{
-
-	}
-
+	
 	void Session::RecvComplete(const boost::system::error_code& error, size_t bytes_transferred)
 	{
 		// TASK - 임시
 		SubRefCount();
-		BOOST_LOG_TRIVIAL(info) << "Recv Complete RefCount : " << mRefCount;
 
 		if (error)
 		{
 			if (error == boost::asio::error::eof)
 			{
 				// BOOST_LOG_TRIVIAL(info) << "클라이언트 연결 종료";
+
+				Disconnect(DR_ONCONNECT_ERROR);
 			}
 			else
 			{
-				BOOST_LOG_TRIVIAL(error) << "Session RecvComplete error [" << error.value() << "] " << error.message();
-			}
+				// BOOST_LOG_TRIVIAL(error) << "Session RecvComplete error [" << error.value() << "] " << error.message();
+				std::cout << "Session RecvComplete error [" << error.value() << "] " << error.message() << std::endl;
 
-			SubRefCount();
+				Disconnect(DR_COMPLETION_ERROR);
+			}
 		}
 		else
 		{
@@ -235,17 +253,21 @@ namespace S4Framework
 	{
 		// TASK - 임시
 		SubRefCount();
-		BOOST_LOG_TRIVIAL(info) << "Send Complete RefCount : " << mRefCount;
 
 		if (error)
 		{
 			if (error == boost::asio::error::eof)
 			{
 				// BOOST_LOG_TRIVIAL(info) << "클라이언트 연결 종료";
+
+				Disconnect(DR_ONCONNECT_ERROR);
 			}
 			else
 			{
-				BOOST_LOG_TRIVIAL(error) << "Session SendComplete error [" << error.value() << "] " << error.message();
+				// BOOST_LOG_TRIVIAL(error) << "Session SendComplete error [" << error.value() << "] " << error.message();
+				std::cout << "Session SendComplete error [" << error.value() << "] " << error.message() << std::endl;
+
+				Disconnect(DR_COMPLETION_ERROR);
 			}
 
 			SubRefCount();

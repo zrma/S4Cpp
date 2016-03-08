@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "ClientSession.h"
 #include "ClientSessionManager.h"
+#include "Exception.h"
 #include "Log.h"
 
 namespace S4Framework
@@ -9,9 +10,19 @@ namespace S4Framework
 	{
 	}
 	
-	void ClientSession::OnDisconnect()
+	void ClientSession::AcceptComplete()
 	{
-		BOOST_LOG_TRIVIAL(info) << "클라이언트 접속 해제!";
+		if (1 == InterlockedExchange(&mConnected, 1))
+		{
+			/// already exists?
+			CRASH_ASSERT(false);
+			return;
+		}
+	}
+
+	void ClientSession::OnDisconnect(DisconnectReason dr)
+	{
+		// std::cout << "클라이언트 접속 해제! (" << dr << ")" << std::endl;
 	}
 
 	void ClientSession::OnRelease()

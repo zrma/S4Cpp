@@ -19,7 +19,8 @@ namespace S4Framework
 	
 	void NetworkManager::InitThread()
 	{
-		BOOST_LOG_TRIVIAL(info) << "세션 큐 생성 중";
+		// BOOST_LOG_TRIVIAL(info) << "세션 큐 생성 중";
+		std::cout << "세션 큐 생성 중" << std::endl;
 		LSendRequestSessionList = std::make_shared<SessionListPtr>();
 	}
 
@@ -36,7 +37,8 @@ namespace S4Framework
 		GClientSessionManager = std::make_unique<ClientSessionManager>(mPort, mDispatcher);
 		GClientSessionManager->PrepareClientSession(size);
 
-		BOOST_LOG_TRIVIAL(info) << "클라이언트 접속 대기";
+		// BOOST_LOG_TRIVIAL(info) << "클라이언트 접속 대기";
+		std::cout << "클라이언트 접속 대기" << std::endl;
 
 		auto startTime = GetTickCount64();
 		GClientSessionManager->AcceptClientSession();
@@ -45,21 +47,21 @@ namespace S4Framework
 		{
 			Sleep(100);
 
-			if (startTime + 30000 < GetTickCount64())
+			/*if (startTime + 30000 < GetTickCount64())
 			{
 				mIsContinue = false;
-			}
+			}*/
 		}
 	}
 
 	void NetworkManager::DoSendJob()
 	{
-		while (!LSendRequestSessionList->empty())
+		for (const auto& session : *LSendRequestSessionList)
 		{
-			auto& session = LSendRequestSessionList->front();
 			session->FlushSend();
-			LSendRequestSessionList->pop_front();
 		}
+
+		LSendRequestSessionList->clear();
 	}
 
 }

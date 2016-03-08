@@ -26,7 +26,7 @@ namespace S4Framework
 
 		typedef std::vector<ClientSession*> ClientList;
 		ClientList mClientSessionList;
-		std::deque<int> mClientSessionQueue;
+		std::unordered_set<int> mClientSessionQueue;
 
 		uint64_t mCurrentIssueCount = 0;
 		uint64_t mCurrentReturnCount = 0;
