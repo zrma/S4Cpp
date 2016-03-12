@@ -23,6 +23,7 @@ namespace S4Framework
 		// BOOST_LOG_TRIVIAL(info) << "세션 큐 생성 중";
 		std::cout << "세션 큐 생성 중" << std::endl;
 		LSendRequestSessionList = std::make_shared<SessionPtrList>();
+		LSendRequestFailedSessionList = std::make_shared<SessionPtrList>();
 	}
 
 	void NetworkManager::Run()
@@ -41,28 +42,38 @@ namespace S4Framework
 		// BOOST_LOG_TRIVIAL(info) << "클라이언트 접속 대기";
 		std::cout << "클라이언트 접속 대기" << std::endl;
 
-		auto startTime = GetTickCount64();
+		auto prevTime = GetTickCount64();
 		GClientSessionManager->AcceptClientSession();
+
+		const auto tick = 5 * 60 * 1000; // 5분
 
 		while (mIsContinue)
 		{
 			Sleep(100);
 
-			/*if (startTime + 30000 < GetTickCount64())
+			if (prevTime + tick < GetTickCount64())
 			{
-				mIsContinue = false;
-			}*/
+				// 5분 주기로 세션 모니터링
+				GClientSessionManager->PrintSessionState();
+				prevTime = GetTickCount64();
+				// mIsContinue = false;
+			}
 		}
 	}
 
 	void NetworkManager::DoSendJob()
 	{
-		for (const auto& session : *LSendRequestSessionList)
+		while (!LSendRequestSessionList->empty())
 		{
+			auto& session = LSendRequestSessionList->front();
+			LSendRequestSessionList->pop_front();
+
 			session->FlushSend();
 		}
-
-		LSendRequestSessionList->clear();
+		
+		//////////////////////////////////////////////////////////////////////////
+		// Swap!
+		LSendRequestSessionList->swap(*LSendRequestFailedSessionList);
 	}
 
 }

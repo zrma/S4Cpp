@@ -105,6 +105,7 @@ namespace S4Framework
 	}
 
 	void EventLogDumpOut(std::ostream& ost = std::cout);
+	void PrintMemoryInfo();
 }
 
 #define TRACE_THIS	\

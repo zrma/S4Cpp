@@ -136,4 +136,16 @@ namespace S4Framework
 		auto task = mWrapper.wrap(f);
 		mDispatcher.post(task);
 	}
+
+	void ClientSessionManager::PrintSessionState()
+	{
+		auto f = [=]
+		{
+			std::cout << "session state : (" << mClientSessionQueue.size() << "/" << mClientSessionList.size() << ")" << std::endl;
+			PrintMemoryInfo();
+		};
+		auto task = mWrapper.wrap(f);
+		mDispatcher.post(task);
+	}
+
 }

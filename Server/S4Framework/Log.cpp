@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Log.h"
 #include "ThreadLocal.h"
+#include <Psapi.h>
 
 namespace S4Framework
 {
@@ -56,5 +57,52 @@ namespace S4Framework
 		{
 			LThreadCallElapsedRecord->Append(mFuncSig, GetTickCount64() - mStartTick);
 		}
+	}
+
+	void PrintMemoryInfo()
+	{
+		HANDLE hProcess;
+		PROCESS_MEMORY_COUNTERS pmc;
+		DWORD myProcessId = GetCurrentProcessId();
+
+		std::cout << "\nProcess ID : " << myProcessId << std::endl;
+
+		hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, myProcessId);
+		if (NULL == hProcess)
+		{
+			return;
+		}
+
+		if (GetProcessMemoryInfo(hProcess, &pmc, sizeof(pmc)))
+		{	
+			std::cout << "\tPageFaultCount : ";
+			std::cout << pmc.PageFaultCount << std::endl;
+
+			std::cout << "\tPeakWorkingSetSize : ";
+			std::cout << pmc.PeakWorkingSetSize << std::endl;
+
+			std::cout << "\tWorkingSetSize : ";
+			std::cout << pmc.WorkingSetSize << std::endl;
+
+			std::cout << "\tQuotaPeakPagedPoolUsage : ";
+			std::cout << pmc.QuotaPeakPagedPoolUsage << std::endl;
+
+			std::cout << "\tQuotaPagedPoolUsage : ";
+			std::cout << pmc.QuotaPagedPoolUsage << std::endl;
+
+			std::cout << "\tQuotaPeakNonPagedPoolUsage : ";
+			std::cout << pmc.QuotaPeakNonPagedPoolUsage << std::endl;
+
+			std::cout << "\tQuotaNonPagedPoolUsage : ";
+			std::cout << pmc.QuotaNonPagedPoolUsage << std::endl;
+
+			std::cout << "\tPagefileUsage : ";
+			std::cout << pmc.PagefileUsage << std::endl;
+
+			std::cout << "\tPeakPagefileUsage : ";
+			std::cout << pmc.PeakPagefileUsage << std::endl;
+		}
+
+		CloseHandle(hProcess);
 	}
 }

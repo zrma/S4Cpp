@@ -17,6 +17,7 @@ namespace S4Framework
 		void PrepareClientSession(std::size_t maxConnection);
 		void AcceptClientSession();
 		void ReturnClientSession(const int sessionID);
+		void PrintSessionState();
 
 	private:
 		void AcceptComplete(ClientSession* client, const boost::system::error_code& error);

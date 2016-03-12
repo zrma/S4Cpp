@@ -45,7 +45,6 @@ namespace S4Framework
 	protected:
 		void RecvComplete(const boost::system::error_code& error, size_t bytes_transferred);
 		void SendComplete(const boost::system::error_code& error, size_t bytes_transferred);
-		void DisconnectComplete(const boost::system::error_code& error, size_t bytes_transferred);
 
 		int				mSendPendingCount;
 		int				mBufferOffset;
@@ -66,6 +65,7 @@ namespace S4Framework
 		SyncWrapper		mSendSyncWrapper;
 	};
 
-	typedef std::unordered_set<Session*> SessionPtrList;
+	typedef std::deque<Session*> SessionPtrList;
 	extern thread_local std::shared_ptr<SessionPtrList> LSendRequestSessionList;
+	extern thread_local std::shared_ptr<SessionPtrList> LSendRequestFailedSessionList;
 }

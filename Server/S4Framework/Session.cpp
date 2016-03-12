@@ -11,6 +11,7 @@
 namespace S4Framework
 {
 	thread_local std::shared_ptr<SessionPtrList> LSendRequestSessionList;
+	thread_local std::shared_ptr<SessionPtrList> LSendRequestFailedSessionList;
 
 	Session::Session(int sessionID, boost::asio::io_service& dispatcher)
 		: mSessionID(sessionID)
@@ -76,7 +77,7 @@ namespace S4Framework
 			std::ostream os(&mSendDataBuffer);
 			os.write(pData, nSize);
 
-			LSendRequestSessionList->insert(this);
+			LSendRequestSessionList->push_back(this);
 		};
 		auto task = mSendSyncWrapper.wrap(f);
 		mDispatcher.post(task);
@@ -92,17 +93,28 @@ namespace S4Framework
 
 		auto f = [=]()
 		{
-			// TASK 
+			// 보낼 데이터가 없을 경우
 			if (mSendDataBuffer.size() == 0)
 			{
+				// 보냈던 데이터도 없는 경우
+				if (0 == mSendPendingCount)
+				{
+					return;
+				}
+
+				// 재시도 대상만 별도 수집
+				LSendRequestFailedSessionList->push_back(this);
 				return;
 			}
 
-			// TASK
+			// 이전의 send가 완료 안 된 경우
 			if (mSendPendingCount > 0)
 			{
+				// 재시도 대상만 별도 수집
+				LSendRequestFailedSessionList->push_back(this);
 				return;
 			}
+
 			// TASK - 임시
 			AddRefCount();
 			
