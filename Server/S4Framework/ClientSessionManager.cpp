@@ -94,9 +94,9 @@ namespace S4Framework
 	{
 		if (!error)
 		{
-			std::string ip = boost::lexical_cast<std::string>(client->GetSocket().remote_endpoint());
+			// std::string ip = boost::lexical_cast<std::string>(client->GetSocket().remote_endpoint());
 			// BOOST_LOG_TRIVIAL(info) << "클라이언트 접속 성공. " << client->GetSessionID() << ":" << ip;
-			std::cout << "클라이언트 접속 성공. " << client->GetSessionID() << ":" << ip << std::endl;
+			// std::cout << "클라이언트 접속 성공. " << client->GetSessionID() << ":" << ip << std::endl;
 
 			client->AcceptComplete();
 			client->PostRecv();
@@ -111,16 +111,16 @@ namespace S4Framework
 
 	void ClientSessionManager::ReturnClientSession(const int sessionID)
 	{
-		auto f = [sessionID, this]
+		auto f = [=]
 		{
 			if (mClientSessionList.size() > sessionID && mClientSessionList[sessionID])
 			{
 				ClientSession* client = mClientSessionList[sessionID];
 				CRASH_ASSERT(client->mConnected == 0 && client->mRefCount == 0);
 
-				std::string ip = boost::lexical_cast<std::string>(client->GetSocket().remote_endpoint());
+				// std::string ip = boost::lexical_cast<std::string>(client->GetSocket().remote_endpoint());
 				// BOOST_LOG_TRIVIAL(info) << "클라이언트 접속 종료. " << client->GetSessionID() << ":" << ip;
-				std::cout << "클라이언트 접속 종료. " << client->GetSessionID() << ":" << ip << std::endl;
+				// std::cout << "클라이언트 접속 종료. " << client->GetSessionID() << ":" << ip << std::endl;
 				
 				client->Reset();
 				mClientSessionQueue.insert(sessionID);

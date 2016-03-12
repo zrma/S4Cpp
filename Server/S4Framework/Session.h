@@ -66,6 +66,6 @@ namespace S4Framework
 		SyncWrapper		mSendSyncWrapper;
 	};
 
-	typedef std::unordered_set<Session*> SessionListPtr;
-	extern thread_local std::shared_ptr<SessionListPtr> LSendRequestSessionList;
+	typedef std::unordered_set<Session*> SessionPtrList;
+	extern thread_local std::shared_ptr<SessionPtrList> LSendRequestSessionList;
 }

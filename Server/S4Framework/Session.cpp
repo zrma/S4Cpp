@@ -10,7 +10,7 @@
 
 namespace S4Framework
 {
-	thread_local std::shared_ptr<SessionListPtr> LSendRequestSessionList;
+	thread_local std::shared_ptr<SessionPtrList> LSendRequestSessionList;
 
 	Session::Session(int sessionID, boost::asio::io_service& dispatcher)
 		: mSessionID(sessionID)
@@ -126,15 +126,9 @@ namespace S4Framework
 	void Session::SubRefCount()
 	{
 		long ret = InterlockedDecrement(&mRefCount);
-		// CRASH_ASSERT(ret >= 0);
+		CRASH_ASSERT(ret >= 0);
 
-		if (ret < 0)
-		{
-			std::cout << "Ref Count !!!!!!!!!!!!!!!!!!!!!!!!! " << ret << std::endl;
-		}
-
-		if (ret <= 0)
-		// if (ret == 0)
+		if (ret == 0)
 		{
 			OnRelease();
 		}
@@ -147,21 +141,22 @@ namespace S4Framework
 			return;
 		}
 
-		auto size = mRecvDataBuffer.size();
-		mRecvDataBuffer.consume(size);
-
 		auto f = [=]()
 		{
-			auto size = mSendDataBuffer.size();
+			auto size = mRecvDataBuffer.size();
+			mRecvDataBuffer.consume(size);
+
+			size = mSendDataBuffer.size();
 			mSendDataBuffer.consume(size);
+
+			OnDisconnect(dr);
+
+			/// release refcount when added at issuing a session
+			SubRefCount();
 		};
+
 		auto task = mSendSyncWrapper.wrap(f);
 		mDispatcher.post(task);
-
-		OnDisconnect(dr);
-
-		/// release refcount when added at issuing a session
-		SubRefCount();
 	}
 	
 	void Session::RecvComplete(const boost::system::error_code& error, size_t bytes_transferred)
@@ -180,7 +175,7 @@ namespace S4Framework
 			else
 			{
 				// BOOST_LOG_TRIVIAL(error) << "Session RecvComplete error [" << error.value() << "] " << error.message();
-				std::cout << "Session RecvComplete error [" << error.value() << "] " << error.message() << std::endl;
+				std::cerr << "Session RecvComplete error [" << error.value() << "] " << error.message() << std::endl;
 
 				Disconnect(DR_COMPLETION_ERROR);
 			}
@@ -265,12 +260,10 @@ namespace S4Framework
 			else
 			{
 				// BOOST_LOG_TRIVIAL(error) << "Session SendComplete error [" << error.value() << "] " << error.message();
-				std::cout << "Session SendComplete error [" << error.value() << "] " << error.message() << std::endl;
+				std::cerr << "Session SendComplete error [" << error.value() << "] " << error.message() << std::endl;
 
 				Disconnect(DR_COMPLETION_ERROR);
 			}
-
-			SubRefCount();
 		}
 		else
 		{

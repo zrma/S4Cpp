@@ -9,8 +9,8 @@ namespace S4Framework
 	thread_local int LTickCount = 0;
 	thread_local void* LRecentThisPointer = nullptr;
 
-	thread_local ThreadCallHistory* LThreadCallHistory = nullptr;
-	thread_local ThreadCallElapsedRecord* LThreadCallElapsedRecord = nullptr;
+	thread_local std::shared_ptr<ThreadCallHistory> LThreadCallHistory;
+	thread_local std::shared_ptr<ThreadCallElapsedRecord> LThreadCallElapsedRecord;
 
 	SLIST_HEADER GThreadCallHistory;
 	SLIST_HEADER GThreadCallElapsedRecord;

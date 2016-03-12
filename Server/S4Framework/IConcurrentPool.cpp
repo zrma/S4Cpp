@@ -26,11 +26,11 @@ namespace S4Framework
 		{
 			LThreadId = GetCurrentThreadId();
 
-			LThreadCallHistory = new ThreadCallHistory(LThreadId);
-			InterlockedPushEntrySList(&GThreadCallHistory, (PSLIST_ENTRY)LThreadCallHistory);
+			LThreadCallHistory = std::make_shared<ThreadCallHistory>(LThreadId);
+			InterlockedPushEntrySList(&GThreadCallHistory, (PSLIST_ENTRY)(LThreadCallHistory.get()));
 
-			LThreadCallElapsedRecord = new ThreadCallElapsedRecord(LThreadId);
-			InterlockedPushEntrySList(&GThreadCallElapsedRecord, (PSLIST_ENTRY)LThreadCallElapsedRecord);
+			LThreadCallElapsedRecord = std::make_shared<ThreadCallElapsedRecord>(LThreadId);
+			InterlockedPushEntrySList(&GThreadCallElapsedRecord, (PSLIST_ENTRY)(LThreadCallElapsedRecord.get()));
 
 			InitThread();
 			Run();

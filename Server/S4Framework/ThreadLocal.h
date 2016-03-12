@@ -20,8 +20,8 @@ namespace S4Framework
 	class ThreadCallHistory;
 	class ThreadCallElapsedRecord;
 	
-	extern thread_local ThreadCallHistory* LThreadCallHistory;
-	extern thread_local ThreadCallElapsedRecord* LThreadCallElapsedRecord;
+	extern thread_local std::shared_ptr<ThreadCallHistory> LThreadCallHistory;
+	extern thread_local std::shared_ptr<ThreadCallElapsedRecord> LThreadCallElapsedRecord;
 
 	extern SLIST_HEADER GThreadCallHistory;
 	extern SLIST_HEADER GThreadCallElapsedRecord;

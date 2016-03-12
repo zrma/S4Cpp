@@ -15,13 +15,14 @@ namespace S4Framework
 
 	NetworkManager::~NetworkManager()
 	{
+		GClientSessionManager.release();
 	}
 	
 	void NetworkManager::InitThread()
 	{
 		// BOOST_LOG_TRIVIAL(info) << "技记 钮 积己 吝";
 		std::cout << "技记 钮 积己 吝" << std::endl;
-		LSendRequestSessionList = std::make_shared<SessionListPtr>();
+		LSendRequestSessionList = std::make_shared<SessionPtrList>();
 	}
 
 	void NetworkManager::Run()
