@@ -101,7 +101,7 @@ int main()
 	GNetworkManager.reset();
 	GLogicPool.reset();
 	
-// BOOST_LOG_TRIVIAL(info) << "네트워크 접속 종료";
+	// BOOST_LOG_TRIVIAL(info) << "네트워크 접속 종료";
 	std::cout << "네트워크 접속 종료" << std::endl;
 	getchar();
 
