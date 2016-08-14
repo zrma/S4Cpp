@@ -7,7 +7,7 @@ namespace S4Framework
 	class ConcurrentJobManager : public IConcurrentPool
 	{
 	public:
-		ConcurrentJobManager(std::size_t size = MAX_LOGIC_THREAD);
+		ConcurrentJobManager( std::size_t size = MAX_LOGIC_THREAD );
 		~ConcurrentJobManager();
 	};
 }

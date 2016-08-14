@@ -4,11 +4,9 @@
 
 namespace S4Framework
 {
-	ConcurrentJobManager::ConcurrentJobManager(std::size_t size) : IConcurrentPool(size)
-	{
-	}
+	ConcurrentJobManager::ConcurrentJobManager( std::size_t size ) : IConcurrentPool( size )
+	{}
 
 	ConcurrentJobManager::~ConcurrentJobManager()
-	{
-	}
+	{}
 }

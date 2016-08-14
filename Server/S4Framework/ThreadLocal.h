@@ -16,10 +16,10 @@ namespace S4Framework
 	extern thread_local int LThreadId;
 	extern thread_local int LTickCount;
 	extern thread_local void* LRecentThisPointer;
-	
+
 	class ThreadCallHistory;
 	class ThreadCallElapsedRecord;
-	
+
 	extern thread_local std::shared_ptr<ThreadCallHistory> LThreadCallHistory;
 	extern thread_local std::shared_ptr<ThreadCallElapsedRecord> LThreadCallElapsedRecord;
 

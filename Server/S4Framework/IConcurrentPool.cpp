@@ -6,7 +6,7 @@
 
 namespace S4Framework
 {
-	IConcurrentPool::IConcurrentPool(std::size_t size) : mPoolSize(size)
+	IConcurrentPool::IConcurrentPool( std::size_t size ) : mPoolSize( size )
 	{
 
 	}
@@ -20,25 +20,25 @@ namespace S4Framework
 
 	void IConcurrentPool::Init()
 	{
-		mWork = std::make_shared<boost::asio::io_service::work>(mDispatcher);
+		mWork = std::make_shared<boost::asio::io_service::work>( mDispatcher );
 
-		auto f = [=]()
+		auto f = [ = ]()
 		{
 			LThreadId = GetCurrentThreadId();
 
-			LThreadCallHistory = std::make_shared<ThreadCallHistory>(LThreadId);
-			InterlockedPushEntrySList(&GThreadCallHistory, (PSLIST_ENTRY)(LThreadCallHistory.get()));
+			LThreadCallHistory = std::make_shared<ThreadCallHistory>( LThreadId );
+			InterlockedPushEntrySList( &GThreadCallHistory, (PSLIST_ENTRY) ( LThreadCallHistory.get() ) );
 
-			LThreadCallElapsedRecord = std::make_shared<ThreadCallElapsedRecord>(LThreadId);
-			InterlockedPushEntrySList(&GThreadCallElapsedRecord, (PSLIST_ENTRY)(LThreadCallElapsedRecord.get()));
+			LThreadCallElapsedRecord = std::make_shared<ThreadCallElapsedRecord>( LThreadId );
+			InterlockedPushEntrySList( &GThreadCallElapsedRecord, (PSLIST_ENTRY) ( LThreadCallElapsedRecord.get() ) );
 
 			InitThread();
 			Run();
 		};
 
-		for (std::size_t i = 0; i < mPoolSize; ++i)
+		for( std::size_t i = 0; i < mPoolSize; ++i )
 		{
-			mGroup.create_thread(f);
+			mGroup.create_thread( f );
 		}
 	}
 
@@ -46,5 +46,4 @@ namespace S4Framework
 	{
 		mDispatcher.run();
 	}
-
 }

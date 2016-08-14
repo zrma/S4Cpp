@@ -20,18 +20,18 @@ namespace S4Framework
 	private:
 		IConcurrentPool() = delete;
 	public:
-		IConcurrentPool(std::size_t size);
+		IConcurrentPool( std::size_t size );
 		virtual ~IConcurrentPool() = 0;
 
 		template <class F>
-		void PostJob(F f)
+		void PostJob( F f )
 		{
-			mDispatcher.post(f);
+			mDispatcher.post( f );
 		}
-		
+
 		typedef boost::asio::io_service Dispatcher;
 		Dispatcher& GetDispatcher() { return mDispatcher; }
-		
+
 		void Init();
 	protected:
 		virtual void InitThread() {};
@@ -39,7 +39,7 @@ namespace S4Framework
 
 		Dispatcher			mDispatcher;
 		boost::thread_group	mGroup;
-		
+
 		std::shared_ptr<boost::asio::io_service::work> mWork;
 		std::size_t	mPoolSize;
 	};
