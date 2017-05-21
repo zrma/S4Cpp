@@ -13,9 +13,9 @@ namespace S4Framework
 
 	ClientSessionManager::~ClientSessionManager()
 	{
-		for (auto& toBeDelete : mClientSessionList )
+		for( auto& toBeDelete : mClientSessionList )
 		{
-			if (toBeDelete->GetSocket().is_open())
+			if( toBeDelete->GetSocket().is_open() )
 			{
 				toBeDelete->GetSocket().close();
 			}
@@ -26,20 +26,20 @@ namespace S4Framework
 		mClientSessionQueue.clear();
 	}
 
-	void ClientSessionManager::PrepareClientSession(std::size_t maxConnection)
+	void ClientSessionManager::PrepareClientSession( std::size_t maxConnection )
 	{
-		CRASH_ASSERT(LThreadType == THREAD_MAIN);
-		
+		CRASH_ASSERT( LThreadType == THREAD_MAIN );
+
 		mMaxConnection = maxConnection;
 
-		for (auto& toBeDelete : mClientSessionList)
+		for( auto& toBeDelete : mClientSessionList )
 		{
-			if (toBeDelete == nullptr)
+			if( toBeDelete == nullptr )
 			{
 				continue;
 			}
 
-			if (toBeDelete->GetSocket().is_open())
+			if( toBeDelete->GetSocket().is_open() )
 			{
 				toBeDelete->GetSocket().close();
 			}
@@ -49,21 +49,21 @@ namespace S4Framework
 		mClientSessionList.clear();
 		mClientSessionQueue.clear();
 
-		mClientSessionList.resize(mMaxConnection);
-		
-		for (int i = 0; i < mClientSessionList.size(); ++i)
+		mClientSessionList.resize( mMaxConnection );
+
+		for( int i = 0; i < mClientSessionList.size(); ++i )
 		{
-			ClientSession* client = new ClientSession(i, mAcceptor.get_io_service());
-			mClientSessionList[i] = client;
-			mClientSessionQueue.insert(i);
+			ClientSession* client = new ClientSession( i, mAcceptor.get_io_service() );
+			mClientSessionList[ i ] = client;
+			mClientSessionQueue.insert( i );
 		}
 	}
 
 	void ClientSessionManager::AcceptClientSession()
 	{
-		auto f = [=]
+		auto f = [ = ]
 		{
-			if (mClientSessionQueue.empty())
+			if( mClientSessionQueue.empty() )
 			{
 				mIsAccepting = false;
 				return;
@@ -71,28 +71,28 @@ namespace S4Framework
 
 			mIsAccepting = true;
 			int sessionID = *mClientSessionQueue.begin();
-			mClientSessionQueue.erase(sessionID);
+			mClientSessionQueue.erase( sessionID );
 
-			if (mClientSessionList.size() > sessionID && mClientSessionList[sessionID])
+			if( mClientSessionList.size() > sessionID && mClientSessionList[ sessionID ] )
 			{
-				ClientSession* newClient = mClientSessionList[sessionID];
+				ClientSession* newClient = mClientSessionList[ sessionID ];
 
 				newClient->Reset();
 				newClient->AddRefCount(); ///< refcount +1 for issuing 
 
-				mAcceptor.async_accept(newClient->GetSocket(),
-					boost::bind(&ClientSessionManager::AcceptComplete, this, newClient, boost::asio::placeholders::error));
+				mAcceptor.async_accept( newClient->GetSocket(),
+					boost::bind( &ClientSessionManager::AcceptComplete, this, newClient, boost::asio::placeholders::error ) );
 
 				++mCurrentIssueCount;
 			}
 		};
-		auto task = mWrapper.wrap(f);
-		mDispatcher.post(task);
+		auto task = mWrapper.wrap( f );
+		mDispatcher.post( task );
 	}
 
-	void ClientSessionManager::AcceptComplete(ClientSession* client, const boost::system::error_code& error)
+	void ClientSessionManager::AcceptComplete( ClientSession* client, const boost::system::error_code& error )
 	{
-		if (!error)
+		if( !error )
 		{
 			// std::string ip = boost::lexical_cast<std::string>(client->GetSocket().remote_endpoint());
 			// BOOST_LOG_TRIVIAL(info) << "클라이언트 접속 성공. " << client->GetSessionID() << ":" << ip;
@@ -109,43 +109,42 @@ namespace S4Framework
 		}
 	}
 
-	void ClientSessionManager::ReturnClientSession(const int sessionID)
+	void ClientSessionManager::ReturnClientSession( const int sessionID )
 	{
-		auto f = [=]
+		auto f = [ = ]
 		{
-			if (mClientSessionList.size() > sessionID && mClientSessionList[sessionID])
+			if( mClientSessionList.size() > sessionID && mClientSessionList[ sessionID ] )
 			{
-				ClientSession* client = mClientSessionList[sessionID];
-				CRASH_ASSERT(client->mConnected == 0 && client->mRefCount == 0);
+				ClientSession* client = mClientSessionList[ sessionID ];
+				CRASH_ASSERT( client->mConnected == 0 && client->mRefCount == 0 );
 
 				// std::string ip = boost::lexical_cast<std::string>(client->GetSocket().remote_endpoint());
 				// BOOST_LOG_TRIVIAL(info) << "클라이언트 접속 종료. " << client->GetSessionID() << ":" << ip;
 				// std::cout << "클라이언트 접속 종료. " << client->GetSessionID() << ":" << ip << std::endl;
-				
+
 				client->Reset();
-				mClientSessionQueue.insert(sessionID);
+				mClientSessionQueue.insert( sessionID );
 
 				++mCurrentReturnCount;
 
-				if (mIsAccepting == false)
+				if( mIsAccepting == false )
 				{
 					AcceptClientSession();
 				}
 			}
 		};
-		auto task = mWrapper.wrap(f);
-		mDispatcher.post(task);
+		auto task = mWrapper.wrap( f );
+		mDispatcher.post( task );
 	}
 
 	void ClientSessionManager::PrintSessionState()
 	{
-		auto f = [=]
+		auto f = [ = ]
 		{
 			std::cout << "session state : (" << mClientSessionQueue.size() << "/" << mClientSessionList.size() << ")" << std::endl;
 			PrintMemoryInfo();
 		};
-		auto task = mWrapper.wrap(f);
-		mDispatcher.post(task);
+		auto task = mWrapper.wrap( f );
+		mDispatcher.post( task );
 	}
-
 }

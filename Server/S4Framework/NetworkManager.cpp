@@ -8,16 +8,15 @@
 
 namespace S4Framework
 {
-	NetworkManager::NetworkManager(int port, std::size_t size)
-		: IConcurrentPool(size), mPort(port)
-	{
-	}
+	NetworkManager::NetworkManager( int port, std::size_t size )
+		: IConcurrentPool( size ), mPort( port )
+	{}
 
 	NetworkManager::~NetworkManager()
 	{
 		GClientSessionManager.release();
 	}
-	
+
 	void NetworkManager::InitThread()
 	{
 		// BOOST_LOG_TRIVIAL(info) << "세션 큐 생성 중";
@@ -31,13 +30,13 @@ namespace S4Framework
 		do
 		{
 			DoSendJob();
-		} while (mDispatcher.run_one());
+		} while( mDispatcher.run_one() );
 	}
 
-	void NetworkManager::StartAccept(std::size_t size)
+	void NetworkManager::StartAccept( std::size_t size )
 	{
-		GClientSessionManager = std::make_unique<ClientSessionManager>(mPort, mDispatcher);
-		GClientSessionManager->PrepareClientSession(size);
+		GClientSessionManager = std::make_unique<ClientSessionManager>( mPort, mDispatcher );
+		GClientSessionManager->PrepareClientSession( size );
 
 		// BOOST_LOG_TRIVIAL(info) << "클라이언트 접속 대기";
 		std::cout << "클라이언트 접속 대기" << std::endl;
@@ -47,11 +46,11 @@ namespace S4Framework
 
 		const auto tick = 5 * 60 * 1000; // 5분
 
-		while (mIsContinue)
+		while( mIsContinue )
 		{
-			Sleep(100);
+			Sleep( 100 );
 
-			if (prevTime + tick < GetTickCount64())
+			if( prevTime + tick < GetTickCount64() )
 			{
 				// 5분 주기로 세션 모니터링
 				GClientSessionManager->PrintSessionState();
@@ -63,17 +62,16 @@ namespace S4Framework
 
 	void NetworkManager::DoSendJob()
 	{
-		while (!LSendRequestSessionList->empty())
+		while( !LSendRequestSessionList->empty() )
 		{
 			auto& session = LSendRequestSessionList->front();
 			LSendRequestSessionList->pop_front();
 
 			session->FlushSend();
 		}
-		
+
 		//////////////////////////////////////////////////////////////////////////
 		// Swap!
-		LSendRequestSessionList->swap(*LSendRequestFailedSessionList);
+		LSendRequestSessionList->swap( *LSendRequestFailedSessionList );
 	}
-
 }

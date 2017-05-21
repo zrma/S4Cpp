@@ -8,19 +8,20 @@ namespace S4Framework
 	class ClientSessionManager
 	{
 	public:
-		ClientSessionManager(int port, boost::asio::io_service& dispatcher)
-			: mDispatcher(dispatcher)
-			, mAcceptor(dispatcher, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port))
-			, mWrapper(dispatcher) {}
+		ClientSessionManager( int port, boost::asio::io_service& dispatcher )
+			: mDispatcher( dispatcher )
+			, mAcceptor( dispatcher, boost::asio::ip::tcp::endpoint( boost::asio::ip::tcp::v4(), port ) )
+			, mWrapper( dispatcher )
+		{}
 		~ClientSessionManager();
 
-		void PrepareClientSession(std::size_t maxConnection);
+		void PrepareClientSession( std::size_t maxConnection );
 		void AcceptClientSession();
-		void ReturnClientSession(const int sessionID);
+		void ReturnClientSession( const int sessionID );
 		void PrintSessionState();
 
 	private:
-		void AcceptComplete(ClientSession* client, const boost::system::error_code& error);
+		void AcceptComplete( ClientSession* client, const boost::system::error_code& error );
 
 		typedef boost::asio::strand SyncWrapper;
 		SyncWrapper mWrapper;
