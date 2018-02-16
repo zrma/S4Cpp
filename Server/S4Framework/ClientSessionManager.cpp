@@ -6,6 +6,7 @@
 #include "Log.h"
 
 #include <boost/lexical_cast.hpp>
+#include <boost/asio/use_future.hpp>
 
 namespace S4Framework
 {
@@ -73,15 +74,18 @@ namespace S4Framework
 			int sessionID = *mClientSessionQueue.begin();
 			mClientSessionQueue.erase( sessionID );
 
-			if( mClientSessionList.size() > sessionID && mClientSessionList[ sessionID ] )
+			if (mClientSessionList.size() > sessionID && mClientSessionList[sessionID])
 			{
-				ClientSession* newClient = mClientSessionList[ sessionID ];
+				ClientSession* newClient = mClientSessionList[sessionID];
 
 				newClient->Reset();
 				newClient->AddRefCount(); ///< refcount +1 for issuing 
 
-				mAcceptor.async_accept( newClient->GetSocket(),
-					boost::bind( &ClientSessionManager::AcceptComplete, this, newClient, boost::asio::placeholders::error ) );
+				/*mAcceptor.async_accept(newClient->GetSocket(),
+					boost::bind(&ClientSessionManager::AcceptComplete, this, newClient, boost::asio::placeholders::error));*/
+
+				mAcceptor.async_accept(newClient->GetSocket(),
+					boost::bind(&ClientSessionManager::AcceptComplete, this, newClient, boost::asio::placeholders::error));
 
 				++mCurrentIssueCount;
 			}

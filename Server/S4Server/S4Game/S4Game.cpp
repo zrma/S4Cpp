@@ -17,8 +17,8 @@
 const int PORT_NUM		= 35555;
 const int MAX_SESSIONS	= 10000;
 
-std::shared_ptr<S4Framework::NetworkManager> GNetworkManager;
-std::shared_ptr<S4Framework::ConcurrentJobManager> GLogicPool;
+std::unique_ptr<S4Framework::NetworkManager> GNetworkManager;
+std::unique_ptr<S4Framework::ConcurrentJobManager> GLogicPool;
 
 class Test : public S4Framework::ISyncExecutable
 {
@@ -85,14 +85,14 @@ int main()
 	GLogicPool = std::make_unique<S4Framework::ConcurrentJobManager>();
 	GLogicPool->Init();
 
-	/*for (std::size_t i = 0; i < 3000; ++i)
+	for (std::size_t i = 0; i < 3000; ++i)
 	{
 		auto t1 = std::make_shared<Test>(*GLogicPool);
 		t1->DoSync(&Test::Reset);
 
 		int heartBeat = rand() % 500 + 500;
 		S4Framework::DoSyncAfter(10, t1, &Test::Start, heartBeat);
-	}*/
+	}
 
 	GNetworkManager = std::make_unique<S4Framework::NetworkManager>( PORT_NUM );
 	GNetworkManager->Init();
