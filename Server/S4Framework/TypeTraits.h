@@ -2,14 +2,20 @@
 #include <type_traits>
 #include <memory>
 
+#include <boost/mpl/bool.hpp>
+
 template <typename T>
-struct is_shared_ptr
+struct is_shared_ptr: boost::mpl::false_
 {
-	const static bool value = false;
 };
 
 template <typename T>
-struct is_shared_ptr< std::shared_ptr<T> >
+struct is_shared_ptr< std::shared_ptr<T> >: boost::mpl::true_
 {
-	const static bool value = true;
 };
+
+template<typename T>
+constexpr bool is_shared_ptr_t(T)
+{
+	return is_shared_ptr<T>::value;
+}
