@@ -20,55 +20,6 @@ const int MAX_SESSIONS	= 10000;
 std::unique_ptr<S4Framework::NetworkManager> GNetworkManager;
 std::unique_ptr<S4Framework::ConcurrentJobManager> GLogicPool;
 
-class Test : public S4Framework::ISyncExecutable
-{
-public:
-	Test(S4Framework::IConcurrentPool& pool) : ISyncExecutable(pool)
-	{
-
-	}
-	virtual ~Test() {}
-
-	void Reset()
-	{
-		mCount = 0;
-		mHeartBeat = 0;
-	}
-
-	void Start(int heartbeat)
-	{
-		mHeartBeat = heartbeat;
-
-		OnTick();
-	}
-
-	void OnTick()
-	{
-		++mCount;
-		if (mHeartBeat > 0)
-		{
-			if ( rand() % 1000 > 998 )
-			{
-				// BOOST_LOG_TRIVIAL(info) << "Thread ID : " << GetCurrentThreadId() << " / 카운트 : " << mCount;
-				std::cout << "Thread ID : " << GetCurrentThreadId() << " / 카운트 : " << mCount << std::endl;
-
-				DoSync(&Test::Reset);
-
-				int heartBeat = rand() % 500 + 500;
-				S4Framework::DoSyncAfter(10, GetSharedFromThis<Test>(), &Test::Start, heartBeat);
-
-				return;
-			}
-
-			S4Framework::DoSyncAfter(mHeartBeat, GetSharedFromThis<Test>(), &Test::OnTick);
-		}
-	}
-
-private:
-	int mCount = 0;
-	int mHeartBeat = 0;
-};
-
 int main()
 {
 	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
@@ -84,15 +35,6 @@ int main()
 
 	GLogicPool = std::make_unique<S4Framework::ConcurrentJobManager>();
 	GLogicPool->Init();
-
-	for (std::size_t i = 0; i < 3000; ++i)
-	{
-		auto t1 = std::make_shared<Test>(*GLogicPool);
-		t1->DoSync(&Test::Reset);
-
-		int heartBeat = rand() % 500 + 500;
-		S4Framework::DoSyncAfter(10, t1, &Test::Start, heartBeat);
-	}
 
 	GNetworkManager = std::make_unique<S4Framework::NetworkManager>( PORT_NUM );
 	GNetworkManager->Init();

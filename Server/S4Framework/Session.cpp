@@ -213,44 +213,6 @@ namespace S4Framework
 			// mRecvDataBuffer.consume(size);
 			// trace(boost::str(boost::format("Still on buffer %d bytes") % _read_buf.size()));
 
-			/*
-			memcpy(&m_PacketBuffer[m_nPacketBufferMark], m_ReceiveBuffer.data(), bytes_transferred);
-
-			int nPacketData = m_nPacketBufferMark + bytes_transferred;
-			int nReadData = 0;
-
-			while (nPacketData > 0)
-			{
-				if (nPacketData < sizeof(PACKET_HEADER))
-				{
-					break;
-				}
-
-				PACKET_HEADER* pHeader = (PACKET_HEADER*)&m_PacketBuffer[nReadData];
-
-				if (pHeader->nSize <= nPacketData)
-				{
-					m_pServer->ProcessPacket(m_nSessionID, &m_PacketBuffer[nReadData]);
-
-					nPacketData -= pHeader->nSize;
-					nReadData += pHeader->nSize;
-				}
-				else
-				{
-					break;
-				}
-			}
-
-			if (nPacketData > 0)
-			{
-				char TempBuffer[MAX_RECEIVE_BUFFER_LEN] = { 0, };
-				memcpy(&TempBuffer[0], &m_PacketBuffer[nReadData], nPacketData);
-				memcpy(&m_PacketBuffer[0], &TempBuffer[0], nPacketData);
-			}
-
-			m_nPacketBufferMark = nPacketData;
-
-			*/
 			PostRecv();
 		}
 	}
