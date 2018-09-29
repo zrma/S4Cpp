@@ -125,10 +125,10 @@ namespace S4Framework
 		stackWalker.SetOutputStream(&historyOut);
 		stackWalker.ShowCallstack();
 		
-		for ( const auto& iter : hThreadVector )
+		for ( const auto& it : hThreadVector )
 		{
-			historyOut << std::endl << "===== Thread Call Stack [Thread:" << GetThreadId(iter) << "]" << std::endl;
-			stackWalker.ShowCallstack(iter);
+			historyOut << std::endl << "===== Thread Call Stack [Thread:" << GetThreadId(it) << "]" << std::endl;
+			stackWalker.ShowCallstack(it);
 
 		}
 

@@ -1,11 +1,15 @@
 #pragma once
 
+#include <mutex>
+
 #include "Exception.h"
+
+using LockGuard = std::lock_guard<std::mutex>;
 
 namespace S4Framework
 {
 	template <class TOBJECT, int ALLOC_COUNT = 100>
-	class ObjectPool : public ClassTypeLock<TOBJECT>
+	class ObjectPool
 	{
 	public:
 		ObjectPool()
@@ -15,7 +19,7 @@ namespace S4Framework
 
 		static void* operator new(size_t objSize)
 		{
-			LockGuard criticalSection;
+			LockGuard criticalSection(mutex);
 
 			if (!mFreeList)
 			{
@@ -43,9 +47,9 @@ namespace S4Framework
 			return pAvailable;
 		}
 
-			static void	operator delete(void* obj)
+		static void	operator delete(void* obj)
 		{
-			LockGuard criticalSection;
+			LockGuard criticalSection(mutex);
 
 			CRASH_ASSERT(mCurrentUseCount > 0);
 
@@ -61,6 +65,7 @@ namespace S4Framework
 		static int		mTotalAllocCount; ///< for tracing
 		static int		mCurrentUseCount; ///< for tracing
 
+		static std::mutex mutex;
 	};
 
 
@@ -73,4 +78,3 @@ namespace S4Framework
 	template <class TOBJECT, int ALLOC_COUNT>
 	int ObjectPool<TOBJECT, ALLOC_COUNT>::mCurrentUseCount = 0;
 }
-

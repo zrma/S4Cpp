@@ -23,11 +23,11 @@ namespace S4Framework
 
 		void	Reset();
 
-		int		GetSessionID() { return mSessionID; }
+		decltype(auto)		GetSessionID() { return mSessionID; }
 
 		typedef boost::asio::ip::tcp::socket Socket;
 
-		Socket&	GetSocket() { return mSocket; }
+		decltype(auto)	GetSocket() { return std::forward<Socket>(mSocket); }
 
 		void PostRecv();
 		void PostSend( const char* pData, const std::size_t nSize );
@@ -37,7 +37,7 @@ namespace S4Framework
 		void AddRefCount();
 		void SubRefCount();
 
-		bool IsConnected() const { return !!mConnected; }
+		decltype(auto) IsConnected() const { return !!mConnected; }
 		void Disconnect( DisconnectReason dr );
 		virtual void OnDisconnect( DisconnectReason dr ) = 0;
 		virtual void OnRelease() = 0;

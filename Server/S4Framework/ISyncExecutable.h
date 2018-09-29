@@ -12,17 +12,17 @@ namespace S4Framework
 	{
 	public:
 		ISyncExecutable() = delete;
-		ISyncExecutable( IConcurrentPool& pool ) : mPool( pool ), mWrapper( pool.GetDispatcher() ) {}
+		ISyncExecutable( IConcurrentPool& pool ) : mWrapper( pool.GetDispatcher() ), mPool(pool) {}
 		virtual ~ISyncExecutable() {}
 
 		template <class R, class T, class... Args>
-		void DoSync( R( T::*memfunc )( Args... ), Args... args )
+		void DoSync(R(T::*mem_func)(Args...), Args... args)
 		{
-			static_assert( true == std::is_convertible<T, ISyncExecutable>::value, "T should be derived from SyncExecutable" );
+			static_assert(true == std::is_convertible<T, ISyncExecutable>::value, "T should be derived from SyncExecutable");
 
-			auto f = [ = ]( Args... args ) { return ( static_cast<T*>( this )->*memfunc ) ( std::forward<Args>( args )... ); };
-			auto task = mWrapper.wrap( f );
-			mPool.PostJob( task );
+			auto f = [=]() { return (static_cast<T*>(this)->*mem_func) (std::forward<Args>(args)...); };
+			auto task = mWrapper.wrap(f);
+			mPool.PostJob(task);
 		}
 
 		template <class T>
@@ -38,12 +38,12 @@ namespace S4Framework
 		SyncWrapper			mWrapper;
 
 		template <class T, class F, class... Args>
-		friend void DoSyncAfter( uint32_t after, T instance, F memfunc, Args&&... args );
+		friend void DoSyncAfter( uint32_t after, T instance, F mem_func, Args&&... args );
 		IConcurrentPool&	mPool;
 	};
 
 	template <class T, class F, class... Args>
-	void DoSyncAfter( uint32_t after, T instance, F memfunc, Args&&... args )
+	void DoSyncAfter( uint32_t after, T instance, F mem_func, Args&&... args )
 	{
 		static_assert( true == is_shared_ptr<T>::value, "T should be shared_ptr" );
 		static_assert( true == std::is_convertible<T, std::shared_ptr<ISyncExecutable>>::value, "T should be shared_ptr SyncExecutable" );
@@ -52,7 +52,7 @@ namespace S4Framework
 		timer->expires_from_now( std::chrono::milliseconds( after ) );
 
 		auto owner = std::static_pointer_cast<ISyncExecutable>( instance );
-		auto task = owner->mWrapper.wrap( boost::bind( memfunc, instance, std::forward<Args>( args )... ) );
+		auto task = owner->mWrapper.wrap( boost::bind( mem_func, instance, std::forward<Args>( args )... ) );
 
 		timer->async_wait( [ = ]( const boost::system::error_code& error )
 		{

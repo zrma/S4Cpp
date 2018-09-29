@@ -13,11 +13,16 @@ namespace S4Framework
 	thread_local std::shared_ptr<SessionPtrList> LSendRequestSessionList;
 	thread_local std::shared_ptr<SessionPtrList> LSendRequestFailedSessionList;
 
-	Session::Session( int sessionID, boost::asio::io_service& dispatcher )
-		: mSessionID( sessionID )
-		, mDispatcher( dispatcher )
-		, mSocket( dispatcher )
-		, mSendSyncWrapper( dispatcher )
+	/**
+	 * \brief Session
+	 * \param sessionID SessionID
+	 * \param dispatcher Boost io_service
+	 */
+	Session::Session(int sessionID, boost::asio::io_service& dispatcher)
+		: mSendPendingCount(0), mBufferOffset(0), mSessionID(sessionID)
+		, mSocket(dispatcher)
+		, mDispatcher(dispatcher)
+		, mSendSyncWrapper(dispatcher)
 	{}
 
 	Session::~Session()

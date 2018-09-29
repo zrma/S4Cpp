@@ -1,5 +1,4 @@
 #pragma once
-#include <type_traits>
 #include <memory>
 
 #include <boost/mpl/bool.hpp>

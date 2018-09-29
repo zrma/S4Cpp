@@ -7,11 +7,11 @@ namespace S4Framework
 {
 	void ThreadCallHistory::DumpOut(std::ostream& ost)
 	{
-		uint64_t count = mCounter < MAX_HISTORY ? mCounter : MAX_HISTORY;
+		auto count = mCounter < MAX_HISTORY ? mCounter : MAX_HISTORY;
 
 		ost << "===== Recent Call History [Thread:" << mThreadId << "]" << std::endl;
 
-		for (int i = 1; i <= count; ++i)
+		for (auto i = 1; i <= count; ++i)
 		{
 			ost << "   " << mHistory[(mCounter - i) % MAX_HISTORY] << std::endl;
 		}
@@ -20,11 +20,11 @@ namespace S4Framework
 
 	void ThreadCallElapsedRecord::DumpOut(std::ostream& ost)
 	{
-		uint64_t count = mCounter < MAX_ELAPSED_RECORD ? mCounter : MAX_ELAPSED_RECORD;
+		auto count = mCounter < MAX_ELAPSED_RECORD ? mCounter : MAX_ELAPSED_RECORD;
 
 		ost << "===== Recent Call Performance [Thread:" << mThreadId << "]" << std::endl;
 
-		for (int i = 1; i <= count; ++i)
+		for (auto i = 1; i <= count; ++i)
 		{
 			ost << "  FUNC:" << mElapsedFuncSig[(mCounter - i) % MAX_ELAPSED_RECORD]
 				<< "ELAPSED: " << mElapsedTime[(mCounter - i) % MAX_ELAPSED_RECORD] << std::endl;
@@ -38,11 +38,11 @@ namespace S4Framework
 
 	void EventLogDumpOut(std::ostream& ost)
 	{
-		__int64 count = gCurrentLogIndex < MAX_LOG_SIZE ? gCurrentLogIndex : MAX_LOG_SIZE;
+		auto count = gCurrentLogIndex < MAX_LOG_SIZE ? gCurrentLogIndex : MAX_LOG_SIZE;
 
 		ost << "===== Recent Sequential Event Log =====" << std::endl;
 
-		for (int i = 1; i <= count; ++i)
+		for (auto i = 1; i <= count; ++i)
 		{
 			const LogEvent& log = gLogEvents[(gCurrentLogIndex - i) % MAX_LOG_SIZE];
 			ost << "TID[" << log.mThreadId << "] MSG[ " << log.mMessage << " ] INFO [" << log.mAdditionalInfo << "]" << std::endl;
@@ -104,5 +104,7 @@ namespace S4Framework
 		}
 
 		CloseHandle(hProcess);
+
+		return;
 	}
 }
