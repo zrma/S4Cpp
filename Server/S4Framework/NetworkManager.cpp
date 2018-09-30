@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 
 #include "NetworkManager.h"
 #include "Log.h"
@@ -19,8 +19,8 @@ namespace S4Framework
 
 	void NetworkManager::InitThread()
 	{
-		// BOOST_LOG_TRIVIAL(info) << "¼¼¼Ç Å¥ »ý¼º Áß";
-		std::cout << "¼¼¼Ç Å¥ »ý¼º Áß" << std::endl;
+		// BOOST_LOG_TRIVIAL(info) << "ì„¸ì…˜ í ìƒì„± ì¤‘";
+		std::cout << "ì„¸ì…˜ í ìƒì„± ì¤‘" << std::endl;
 		LSendRequestSessionList = std::make_shared<SessionPtrList>();
 		LSendRequestFailedSessionList = std::make_shared<SessionPtrList>();
 	}
@@ -38,13 +38,14 @@ namespace S4Framework
 		GClientSessionManager = std::make_unique<ClientSessionManager>( mPort, mDispatcher );
 		GClientSessionManager->PrepareClientSession( size );
 
-		// BOOST_LOG_TRIVIAL(info) << "Å¬¶óÀÌ¾ðÆ® Á¢¼Ó ´ë±â";
-		std::cout << "Å¬¶óÀÌ¾ðÆ® Á¢¼Ó ´ë±â" << std::endl;
+		const auto msg = "í´ë¼ì´ì–¸íŠ¸ ì ‘ì† ëŒ€ê¸°";
+		// BOOST_LOG_TRIVIAL(info) << msg;
+		std::cout << msg << std::endl;
 
 		auto prevTime = GetTickCount64();
 		GClientSessionManager->AcceptClientSession();
 
-		const auto tick = 5 * 60 * 1000; // 5ºÐ
+		const auto tick = 5 * 60 * 1000; // 5ë¶„
 
 		while( mIsContinue )
 		{
@@ -52,7 +53,7 @@ namespace S4Framework
 
 			if( prevTime + tick < GetTickCount64() )
 			{
-				// 5ºÐ ÁÖ±â·Î ¼¼¼Ç ¸ð´ÏÅÍ¸µ
+				// 5ë¶„ ì£¼ê¸°ë¡œ ì„¸ì…˜ ëª¨ë‹ˆí„°ë§
 				GClientSessionManager->PrintSessionState();
 				prevTime = GetTickCount64();
 				// mIsContinue = false;

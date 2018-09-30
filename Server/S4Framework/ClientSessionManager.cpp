@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "ClientSessionManager.h"
 #include "ClientSession.h"
 #include "ThreadLocal.h"
@@ -14,9 +14,9 @@ namespace S4Framework
 
 	ClientSessionManager::~ClientSessionManager()
 	{
-		for( auto& toBeDelete : mClientSessionList )
+		for (auto& toBeDelete : mClientSessionList)
 		{
-			if( toBeDelete->GetSocket().is_open() )
+			if (toBeDelete->GetSocket().is_open())
 			{
 				toBeDelete->GetSocket().close();
 			}
@@ -27,20 +27,20 @@ namespace S4Framework
 		mClientSessionQueue.clear();
 	}
 
-	void ClientSessionManager::PrepareClientSession( std::size_t maxConnection )
+	void ClientSessionManager::PrepareClientSession(std::size_t maxConnection)
 	{
-		CRASH_ASSERT( LThreadType == THREAD_MAIN );
+		CRASH_ASSERT(LThreadType == THREAD_MAIN);
 
 		mMaxConnection = maxConnection;
 
-		for( auto& toBeDelete : mClientSessionList )
+		for (auto& toBeDelete : mClientSessionList)
 		{
-			if( toBeDelete == nullptr )
+			if (toBeDelete == nullptr)
 			{
 				continue;
 			}
 
-			if( toBeDelete->GetSocket().is_open() )
+			if (toBeDelete->GetSocket().is_open())
 			{
 				toBeDelete->GetSocket().close();
 			}
@@ -50,36 +50,38 @@ namespace S4Framework
 		mClientSessionList.clear();
 		mClientSessionQueue.clear();
 
-		mClientSessionList.resize( mMaxConnection );
+		mClientSessionList.resize(mMaxConnection);
 
-		for( int i = 0; i < mClientSessionList.size(); ++i )
+		auto size = mClientSessionList.size();
+		for (decltype(size) i = 0; i < size; ++i)
 		{
-			ClientSession* client = new ClientSession( i, mAcceptor.get_io_service() );
-			mClientSessionList[ i ] = client;
-			mClientSessionQueue.insert( i );
+			auto* client = new ClientSession(i, mAcceptor.get_io_service());
+			mClientSessionList[i] = client;
+			mClientSessionQueue.insert(static_cast<int>(i));
 		}
 	}
 
 	void ClientSessionManager::AcceptClientSession()
 	{
-		auto f = [ = ]
+		const auto f = [=]
 		{
-			if( mClientSessionQueue.empty() )
+			if (mClientSessionQueue.empty())
 			{
 				mIsAccepting = false;
 				return;
 			}
 
 			mIsAccepting = true;
-			int sessionID = *mClientSessionQueue.begin();
-			mClientSessionQueue.erase( sessionID );
+			auto size = mClientSessionList.size();
+			const decltype(size) sessionId = *mClientSessionQueue.begin();
+			mClientSessionQueue.erase(static_cast<int>(sessionId));
 
-			if (mClientSessionList.size() > sessionID && mClientSessionList[sessionID])
+			if (size > sessionId && mClientSessionList[sessionId])
 			{
-				ClientSession* newClient = mClientSessionList[sessionID];
+				auto newClient = mClientSessionList[sessionId];
 
 				newClient->Reset();
-				newClient->AddRefCount(); ///< refcount +1 for issuing 
+				newClient->AddRefCount(); ///< ref count +1 for issuing 
 
 				/*mAcceptor.async_accept(newClient->GetSocket(),
 					boost::bind(&ClientSessionManager::AcceptComplete, this, newClient, boost::asio::placeholders::error));*/
@@ -90,20 +92,20 @@ namespace S4Framework
 				++mCurrentIssueCount;
 			}
 		};
-		auto task = mWrapper.wrap( f );
-		mDispatcher.post( task );
+		auto task = mWrapper.wrap(f);
+		mDispatcher.post(task);
 	}
 
-	void ClientSessionManager::AcceptComplete( ClientSession* client, const boost::system::error_code& error )
+	void ClientSessionManager::AcceptComplete(ClientSession* client, const boost::system::error_code& error)
 	{
-		if( !error )
+		if (!error)
 		{
 			// std::string ip = boost::lexical_cast<std::string>(client->GetSocket().remote_endpoint());
-			// BOOST_LOG_TRIVIAL(info) << "Å¬¶óÀÌ¾ðÆ® Á¢¼Ó ¼º°ø. " << client->GetSessionID() << ":" << ip;
-			// std::cout << "Å¬¶óÀÌ¾ðÆ® Á¢¼Ó ¼º°ø. " << client->GetSessionID() << ":" << ip << std::endl;
+			// BOOST_LOG_TRIVIAL(info) << "í´ë¼ì´ì–¸íŠ¸ ì ‘ì† ì„±ê³µ. " << client->GetSessionId() << ":" << ip;
+			// std::cout << "í´ë¼ì´ì–¸íŠ¸ ì ‘ì† ì„±ê³µ. " << client->GetSessionId() << ":" << ip << std::endl;
 
 			client->AcceptComplete();
-			client->PostRecv();
+			client->PostReceive();
 			AcceptClientSession();
 		}
 		else
@@ -113,42 +115,43 @@ namespace S4Framework
 		}
 	}
 
-	void ClientSessionManager::ReturnClientSession( const int sessionID )
+	void ClientSessionManager::ReturnClientSession(const std::size_t sessionId)
 	{
-		auto f = [ = ]
+		const auto f = [=]
 		{
-			if( mClientSessionList.size() > sessionID && mClientSessionList[ sessionID ] )
+			decltype(sessionId) size = mClientSessionList.size();
+			if (size > sessionId && mClientSessionList[sessionId])
 			{
-				ClientSession* client = mClientSessionList[ sessionID ];
-				CRASH_ASSERT( client->mConnected == 0 && client->mRefCount == 0 );
+				ClientSession* client = mClientSessionList[sessionId];
+				CRASH_ASSERT(client->mConnected == 0 && client->mRefCount == 0);
 
 				// std::string ip = boost::lexical_cast<std::string>(client->GetSocket().remote_endpoint());
-				// BOOST_LOG_TRIVIAL(info) << "Å¬¶óÀÌ¾ðÆ® Á¢¼Ó Á¾·á. " << client->GetSessionID() << ":" << ip;
-				// std::cout << "Å¬¶óÀÌ¾ðÆ® Á¢¼Ó Á¾·á. " << client->GetSessionID() << ":" << ip << std::endl;
+				// BOOST_LOG_TRIVIAL(info) << "í´ë¼ì´ì–¸íŠ¸ ì ‘ì† ì¢…ë£Œ. " << client->GetSessionId() << ":" << ip;
+				// std::cout << "í´ë¼ì´ì–¸íŠ¸ ì ‘ì† ì¢…ë£Œ. " << client->GetSessionId() << ":" << ip << std::endl;
 
 				client->Reset();
-				mClientSessionQueue.insert( sessionID );
+				mClientSessionQueue.insert(static_cast<int>(sessionId));
 
 				++mCurrentReturnCount;
 
-				if( mIsAccepting == false )
+				if (!mIsAccepting)
 				{
 					AcceptClientSession();
 				}
 			}
 		};
-		auto task = mWrapper.wrap( f );
-		mDispatcher.post( task );
+		auto task = mWrapper.wrap(f);
+		mDispatcher.post(task);
 	}
 
 	void ClientSessionManager::PrintSessionState()
 	{
-		auto f = [ = ]
+		const auto f = [=]
 		{
 			std::cout << "session state : (" << mClientSessionQueue.size() << "/" << mClientSessionList.size() << ")" << std::endl;
 			PrintMemoryInfo();
 		};
-		auto task = mWrapper.wrap( f );
-		mDispatcher.post( task );
+		auto task = mWrapper.wrap(f);
+		mDispatcher.post(task);
 	}
 }

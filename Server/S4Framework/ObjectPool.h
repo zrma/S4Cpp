@@ -1,4 +1,4 @@
-#pragma once
+Ôªø#pragma once
 
 #include <mutex>
 
@@ -8,13 +8,13 @@ using LockGuard = std::lock_guard<std::mutex>;
 
 namespace S4Framework
 {
-	template <class TOBJECT, int ALLOC_COUNT = 100>
+	template <class Object, const int AllocCount = 100>
 	class ObjectPool
 	{
 	public:
 		ObjectPool()
 		{
-			static_assert(std::is_polymorphic<TOBJECT>::value == false, "NO VIRTUAL TOBJECT!");
+			static_assert(std::is_polymorphic<Object>::value == false, "NO VIRTUAL Object!");
 		}
 
 		static void* operator new(size_t objSize)
@@ -23,24 +23,24 @@ namespace S4Framework
 
 			if (!mFreeList)
 			{
-				mFreeList = new uint8_t[sizeof(TOBJECT)*ALLOC_COUNT];
+				mFreeList = new uint8_t[sizeof(Object)*AllocCount];
 
-				uint8_t* pNext = mFreeList;
-				uint8_t** ppCurr = reinterpret_cast<uint8_t**>(mFreeList);
+				auto pNext = mFreeList;
+				auto ppCurrent = reinterpret_cast<uint8_t**>(mFreeList);
 
-				for (int i = 0; i < ALLOC_COUNT - 1; ++i)
+				for (auto i = 0; i < AllocCount - 1; ++i)
 				{
-					/// OBJECT¿« ≈©±‚∞° π›µÂΩ√ ∆˜¿Œ≈Õ ≈©±‚∫∏¥Ÿ ƒøæﬂ «—¥Ÿ
-					pNext += sizeof(TOBJECT);
-					*ppCurr = pNext;
-					ppCurr = reinterpret_cast<uint8_t**>(pNext);
+					/// OBJECTÏùò ÌÅ¨Í∏∞Í∞Ä Î∞òÎìúÏãú Ìè¨Ïù∏ÌÑ∞ ÌÅ¨Í∏∞Î≥¥Îã§ Ïª§Ïïº ÌïúÎã§
+					pNext += sizeof(Object);
+					*ppCurrent = pNext;
+					ppCurrent = reinterpret_cast<uint8_t**>(pNext);
 				}
 
-				*ppCurr = 0; ///< ∏∂¡ˆ∏∑¿∫ 0¿∏∑Œ «•Ω√
-				mTotalAllocCount += ALLOC_COUNT;
+				*ppCurrent = nullptr; ///< ÎßàÏßÄÎßâÏùÄ 0ÏúºÎ°ú ÌëúÏãú
+				mTotalAllocCount += AllocCount;
 			}
 
-			uint8_t* pAvailable = mFreeList;
+			const auto pAvailable = mFreeList;
 			mFreeList = *reinterpret_cast<uint8_t**>(pAvailable);
 			++mCurrentUseCount;
 
@@ -69,12 +69,12 @@ namespace S4Framework
 	};
 
 
-	template <class TOBJECT, int ALLOC_COUNT>
-	uint8_t* ObjectPool<TOBJECT, ALLOC_COUNT>::mFreeList = nullptr;
+	template <class Object, const int AllocCount>
+	uint8_t* ObjectPool<Object, AllocCount>::mFreeList = nullptr;
 
-	template <class TOBJECT, int ALLOC_COUNT>
-	int ObjectPool<TOBJECT, ALLOC_COUNT>::mTotalAllocCount = 0;
+	template <class Object, const int AllocCount>
+	int ObjectPool<Object, AllocCount>::mTotalAllocCount = 0;
 
-	template <class TOBJECT, int ALLOC_COUNT>
-	int ObjectPool<TOBJECT, ALLOC_COUNT>::mCurrentUseCount = 0;
+	template <class Object, const int AllocCount>
+	int ObjectPool<Object, AllocCount>::mCurrentUseCount = 0;
 }

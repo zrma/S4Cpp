@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "TypeTraits.h"
 #include "IConcurrentPool.h"

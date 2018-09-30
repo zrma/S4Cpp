@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Session.h"
 
@@ -7,9 +7,11 @@ namespace S4Framework
 	class ClientSession : public Session
 	{
 	public:
-		ClientSession( int sessionID, boost::asio::io_service& dispatcher ) : Session( sessionID, dispatcher ) {}
+		ClientSession( std::size_t sessionID, boost::asio::io_service& dispatcher ) : Session( sessionID, dispatcher ) {}
 		ClientSession() = delete;
-		virtual ~ClientSession();
+		ClientSession(const ClientSession&) = delete;
+		ClientSession& operator=(const ClientSession&) = delete;
+		virtual ~ClientSession() = default;
 
 		void AcceptComplete();
 

@@ -1,4 +1,4 @@
-/**********************************************************************
+﻿/**********************************************************************
 *
 * StackWalker.h
 *
@@ -38,7 +38,7 @@
 
 #include <Windows.h>
 #include <fstream>
-// special defines for VC5/6 (if no actual PSDK is installed):
+// special defines for VC5/6 (if no actual pSDK is installed):
 #if _MSC_VER < 1300
 typedef unsigned __int64 DWORD64, *PDWORD64;
 #if defined(_WIN64)
@@ -54,7 +54,7 @@ class StackWalker
 public:
 	typedef enum StackWalkOptions
 	{
-		// No addition info will be retrived 
+		// No addition info will be retrieved 
 		// (only the address is available)
 		RetrieveNone = 0,
 
@@ -70,7 +70,7 @@ public:
 		// Also retrieve the version for the DLL/EXE
 		RetrieveFileVersion = 8,
 
-		// Contains all the abouve
+		// Contains all the above
 		RetrieveVerbose = 0xF,
 
 		// Generate a "good" symbol-search-path
@@ -88,11 +88,16 @@ public:
 
 	StackWalker(
 		int options = OptionsAll, // 'int' is by design, to combine the enum-flags
-		LPCSTR szSymPath = NULL,
+		LPCSTR szSymPath = nullptr,
 		DWORD dwProcessId = GetCurrentProcessId(),
 		HANDLE hProcess = GetCurrentProcess()
 		);
 	StackWalker(DWORD dwProcessId, HANDLE hProcess);
+	StackWalker() = delete;
+	StackWalker(const StackWalker&) = default;
+	StackWalker(StackWalker&&) = default;
+	StackWalker& operator=(const StackWalker&) = default;
+	StackWalker& operator=(StackWalker&&) = default;
 	virtual ~StackWalker();
 
 	typedef BOOL(__stdcall *PReadProcessMemoryRoutine)(
@@ -108,9 +113,9 @@ public:
 
 	BOOL ShowCallstack(
 		HANDLE hThread = GetCurrentThread(),
-		const CONTEXT *context = NULL,
-		PReadProcessMemoryRoutine readMemoryFunction = NULL,
-		LPVOID pUserData = NULL  // optional to identify some data in the 'readMemoryFunction'-callback
+		const CONTEXT *context = nullptr,
+		PReadProcessMemoryRoutine readMemoryFunction = nullptr,
+		LPVOID pUserData = nullptr  // optional to identify some data in the 'readMemoryFunction'-callback
 		);
 
 	void SetOutputStream(std::ofstream* outStream);
@@ -142,13 +147,13 @@ protected:
 		CHAR loadedImageName[STACKWALK_MAX_NAMELEN];
 	} CallstackEntry;
 
-	typedef enum CallstackEntryType { firstEntry, nextEntry, lastEntry };
+	enum CallstackEntryType { firstEntry, nextEntry, lastEntry };
 
 	virtual void OnSymInit(LPCSTR szSearchPath, DWORD symOptions, LPCSTR szUserName);
 	virtual void OnLoadModule(LPCSTR img, LPCSTR mod, DWORD64 baseAddr, DWORD size, DWORD result, LPCSTR symType, LPCSTR pdbName, ULONGLONG fileVersion);
-	virtual void OnCallstackEntry(CallstackEntryType eType, CallstackEntry &entry);
+	virtual void OnCallStackEntry(CallstackEntryType eType, CallstackEntry &entry);
 	virtual void OnDbgHelpErr(LPCSTR szFuncName, DWORD gle, DWORD64 addr);
-	virtual void OnOutput(LPCSTR szText);
+	virtual void OnOutput(LPCSTR buffer);
 
 	StackWalkerInternal *m_sw;
 	HANDLE m_hProcess;
@@ -195,8 +200,8 @@ protected:
 	// The following should be enough for walking the callstack...
 #define GET_CURRENT_CONTEXT(c, contextFlags) \
   do { \
-    memset(&c, 0, sizeof(CONTEXT)); \
-    c.ContextFlags = contextFlags; \
+    memset(&(c), 0, sizeof(CONTEXT)); \
+    (c).ContextFlags = contextFlags; \
     __asm    call x \
     __asm x: pop eax \
     __asm    mov c.Eip, eax \

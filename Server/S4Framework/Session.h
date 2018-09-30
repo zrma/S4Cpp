@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
@@ -18,19 +18,19 @@ namespace S4Framework
 	class Session
 	{
 	public:
-		Session( int sessionID, boost::asio::io_service& dispatcher );
+		Session(std::size_t sessionId, boost::asio::io_service& dispatcher);
 		virtual ~Session();
 
 		void	Reset();
 
-		decltype(auto)		GetSessionID() { return mSessionID; }
+		decltype(auto)		GetSessionId() const { return mSessionID; }
 
 		typedef boost::asio::ip::tcp::socket Socket;
 
 		decltype(auto)	GetSocket() { return std::forward<Socket>(mSocket); }
 
-		void PostRecv();
-		void PostSend( const char* pData, const std::size_t nSize );
+		void PostReceive();
+		void PostSend(const char* pData, const std::size_t nSize);
 
 		void FlushSend();
 
@@ -38,13 +38,13 @@ namespace S4Framework
 		void SubRefCount();
 
 		decltype(auto) IsConnected() const { return !!mConnected; }
-		void Disconnect( DisconnectReason dr );
-		virtual void OnDisconnect( DisconnectReason dr ) = 0;
+		void Disconnect(DisconnectReason dr);
+		virtual void OnDisconnect(DisconnectReason dr) = 0;
 		virtual void OnRelease() = 0;
 
 	protected:
-		void RecvComplete( const boost::system::error_code& error, size_t bytes_transferred );
-		void SendComplete( const boost::system::error_code& error, size_t bytes_transferred );
+		void RecvComplete(const boost::system::error_code& error, size_t bytes_transferred);
+		void SendComplete(const boost::system::error_code& error, size_t bytes_transferred);
 
 		int				mSendPendingCount;
 		int				mBufferOffset;
@@ -52,7 +52,7 @@ namespace S4Framework
 		volatile long	mRefCount = 0;
 		volatile long	mConnected = 0;
 
-		int				mSessionID = -1;
+		std::size_t		mSessionID = -1;
 		Socket			mSocket;
 
 		boost::asio::streambuf		mRecvDataBuffer;

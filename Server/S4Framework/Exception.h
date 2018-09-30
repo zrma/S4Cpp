@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 namespace S4Framework
 {
@@ -11,7 +11,7 @@ namespace S4Framework
 			return;
 		}
 
-		int* crashVal = 0;
+		int* crashVal = nullptr;
 		*crashVal = 0xDEADBEEF;
 	}
 }

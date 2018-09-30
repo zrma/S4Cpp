@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 #include "Log.h"
 #include "ThreadLocal.h"
@@ -22,15 +22,15 @@ namespace S4Framework
 	{
 		mWork = std::make_shared<boost::asio::io_service::work>( mDispatcher );
 
-		auto f = [ = ]()
+		const auto f = [ = ]()
 		{
 			LThreadId = GetCurrentThreadId();
 
 			LThreadCallHistory = std::make_shared<ThreadCallHistory>( LThreadId );
-			InterlockedPushEntrySList( &GThreadCallHistory, (PSLIST_ENTRY) ( LThreadCallHistory.get() ) );
+			InterlockedPushEntrySList( &GThreadCallHistory, reinterpret_cast<PSLIST_ENTRY>(LThreadCallHistory.get()) );
 
 			LThreadCallElapsedRecord = std::make_shared<ThreadCallElapsedRecord>( LThreadId );
-			InterlockedPushEntrySList( &GThreadCallElapsedRecord, (PSLIST_ENTRY) ( LThreadCallElapsedRecord.get() ) );
+			InterlockedPushEntrySList( &GThreadCallElapsedRecord, reinterpret_cast<PSLIST_ENTRY>(LThreadCallElapsedRecord.get()) );
 
 			InitThread();
 			Run();

@@ -31,7 +31,7 @@ int main()
 	/// for dump on crash
 	SetUnhandledExceptionFilter( S4Framework::ExceptionFilter );
 
-	S4Framework::LThreadType = S4Framework::THREAD_TYPE::THREAD_MAIN;
+	S4Framework::LThreadType = S4Framework::ThreadType::THREAD_MAIN;
 
 	GLogicPool = std::make_unique<S4Framework::ConcurrentJobManager>();
 	GLogicPool->Init();

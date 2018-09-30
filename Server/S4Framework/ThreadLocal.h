@@ -1,10 +1,10 @@
-#pragma once
+﻿#pragma once
 
 #include <thread>
 
 namespace S4Framework
 {
-	enum THREAD_TYPE
+	enum ThreadType
 	{
 		THREAD_MAIN = 0,
 		THREAD_IO_WORKER,

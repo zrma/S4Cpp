@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <boost/asio.hpp>
 
@@ -8,16 +8,19 @@ namespace S4Framework
 	class ClientSessionManager
 	{
 	public:
-		ClientSessionManager( int port, boost::asio::io_service& dispatcher )
-			: mDispatcher( dispatcher )
-			, mAcceptor( dispatcher, boost::asio::ip::tcp::endpoint( boost::asio::ip::tcp::v4(), port ) )
-			, mWrapper( dispatcher )
+		ClientSessionManager(int port, boost::asio::io_service& dispatcher)
+			: mWrapper(dispatcher)
+			, mDispatcher(dispatcher)
+			, mAcceptor(dispatcher, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port))
 		{}
+		ClientSessionManager() = delete;
+		ClientSessionManager(const ClientSessionManager&) = delete;
+		ClientSessionManager& operator=(const ClientSessionManager&) = delete;
 		~ClientSessionManager();
 
 		void PrepareClientSession( std::size_t maxConnection );
 		void AcceptClientSession();
-		void ReturnClientSession( const int sessionID );
+		void ReturnClientSession( const std::size_t sessionId);
 		void PrintSessionState();
 
 	private:

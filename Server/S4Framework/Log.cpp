@@ -1,17 +1,17 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "Log.h"
 #include "ThreadLocal.h"
 #include <Psapi.h>
 
 namespace S4Framework
 {
-	void ThreadCallHistory::DumpOut(std::ostream& ost)
+	void ThreadCallHistory::DumpOut(std::ostream& ost) const
 	{
 		auto count = mCounter < MAX_HISTORY ? mCounter : MAX_HISTORY;
 
 		ost << "===== Recent Call History [Thread:" << mThreadId << "]" << std::endl;
 
-		for (auto i = 1; i <= count; ++i)
+		for (decltype(count) i = 1; i <= count; ++i)
 		{
 			ost << "   " << mHistory[(mCounter - i) % MAX_HISTORY] << std::endl;
 		}
@@ -24,7 +24,7 @@ namespace S4Framework
 
 		ost << "===== Recent Call Performance [Thread:" << mThreadId << "]" << std::endl;
 
-		for (auto i = 1; i <= count; ++i)
+		for (decltype(count) i = 1; i <= count; ++i)
 		{
 			ost << "  FUNC:" << mElapsedFuncSig[(mCounter - i) % MAX_ELAPSED_RECORD]
 				<< "ELAPSED: " << mElapsedTime[(mCounter - i) % MAX_ELAPSED_RECORD] << std::endl;
@@ -33,19 +33,19 @@ namespace S4Framework
 
 	}
 
-	LogEvent gLogEvents[MAX_LOG_SIZE];
-	__int64 gCurrentLogIndex = 0;
+	LogEvent GLogEvents[MAX_LOG_SIZE];
+	__int64 GCurrentLogIndex = 0;
 
 	void EventLogDumpOut(std::ostream& ost)
 	{
-		auto count = gCurrentLogIndex < MAX_LOG_SIZE ? gCurrentLogIndex : MAX_LOG_SIZE;
+		const auto count = GCurrentLogIndex < MAX_LOG_SIZE ? GCurrentLogIndex : MAX_LOG_SIZE;
 
 		ost << "===== Recent Sequential Event Log =====" << std::endl;
 
 		for (auto i = 1; i <= count; ++i)
 		{
-			const LogEvent& log = gLogEvents[(gCurrentLogIndex - i) % MAX_LOG_SIZE];
-			ost << "TID[" << log.mThreadId << "] MSG[ " << log.mMessage << " ] INFO [" << log.mAdditionalInfo << "]" << std::endl;
+			const LogEvent& log = GLogEvents[(GCurrentLogIndex - i) % MAX_LOG_SIZE];
+			ost << "TID[" << log.ThreadId << "] MSG[ " << log.Message << " ] INFO [" << log.AdditionalInfo << "]" << std::endl;
 		}
 
 		ost << "===== End of Event Log =====" << std::endl;
@@ -61,14 +61,13 @@ namespace S4Framework
 
 	void PrintMemoryInfo()
 	{
-		HANDLE hProcess;
 		PROCESS_MEMORY_COUNTERS pmc;
-		DWORD myProcessId = GetCurrentProcessId();
+		const auto myProcessId = GetCurrentProcessId();
 
 		std::cout << "\nProcess ID : " << myProcessId << std::endl;
 
-		hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, myProcessId);
-		if (NULL == hProcess)
+		const auto hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, myProcessId);
+		if (nullptr == hProcess)
 		{
 			return;
 		}

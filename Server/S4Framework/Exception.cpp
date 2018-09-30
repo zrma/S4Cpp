@@ -9,15 +9,17 @@
 #include <TlHelp32.h>
 #include <strsafe.h>
 #include "StackWalker.h"
+#include <minwinbase.h>
 
-#define MAX_BUFF_SIZE 1024
+constexpr auto MAX_BUFF_SIZE = 1024;
 
 namespace S4Framework
 {
 	void MakeDump(EXCEPTION_POINTERS* e)
 	{
 		TCHAR tszFileName[MAX_BUFF_SIZE] = { 0 };
-		SYSTEMTIME stTime = { 0 };
+		SYSTEMTIME stTime;
+		ZeroMemory(&stTime, sizeof(stTime));
 		GetSystemTime(&stTime);
 		StringCbPrintf(tszFileName,
 			_countof(tszFileName),
@@ -30,7 +32,7 @@ namespace S4Framework
 			stTime.wMinute,
 			stTime.wSecond);
 
-		HANDLE hFile = CreateFile(tszFileName, GENERIC_WRITE, FILE_SHARE_READ, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+		auto hFile = CreateFile(tszFileName, GENERIC_WRITE, FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 		if (hFile == INVALID_HANDLE_VALUE)
 			return;
 
@@ -44,14 +46,14 @@ namespace S4Framework
 			GetCurrentProcessId(),
 			hFile,
 			MINIDUMP_TYPE(MiniDumpWithIndirectlyReferencedMemory | MiniDumpScanMemory | MiniDumpWithFullMemory),
-			e ? &exceptionInfo : NULL,
-			NULL,
-			NULL);
+			e ? &exceptionInfo : nullptr,
+			nullptr,
+			nullptr);
 
 		if (hFile)
 		{
 			CloseHandle(hFile);
-			hFile = NULL;
+			hFile = nullptr;
 		}
 
 	}
@@ -65,12 +67,12 @@ namespace S4Framework
 		}
 
 		THREADENTRY32 te32;
-		DWORD myThreadId = GetCurrentThreadId();
-		DWORD myProcessId = GetCurrentProcessId();
+		const auto myThreadId = GetCurrentThreadId();
+		const auto myProcessId = GetCurrentProcessId();
 
 		std::vector<HANDLE> hThreadVector;
 
-		HANDLE hThreadSnap = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
+		const auto hThreadSnap = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
 		if (hThreadSnap != INVALID_HANDLE_VALUE)
 		{
 			te32.dwSize = sizeof(THREADENTRY32);
@@ -102,25 +104,25 @@ namespace S4Framework
 
 		/// 콜히스토리 남기고
 		historyOut << "========== WorkerThread Call History ==========" << std::endl << std::endl;
-		ThreadCallHistory* history = (ThreadCallHistory*)InterlockedPopEntrySList(&GThreadCallHistory);
+		auto* history = reinterpret_cast<ThreadCallHistory*>(InterlockedPopEntrySList(&GThreadCallHistory));
 		while (history)
 		{
 			history->DumpOut(historyOut);
-			history = (ThreadCallHistory*)InterlockedPopEntrySList(&GThreadCallHistory);
+			history = reinterpret_cast<ThreadCallHistory*>(InterlockedPopEntrySList(&GThreadCallHistory));
 		}
 		
 		/// 콜성능 남기고
 		historyOut << "========== WorkerThread Call Performance ==========" << std::endl << std::endl;
-		ThreadCallElapsedRecord* record = (ThreadCallElapsedRecord*)InterlockedPopEntrySList(&GThreadCallElapsedRecord);
+		auto* record = reinterpret_cast<ThreadCallElapsedRecord*>(InterlockedPopEntrySList(&GThreadCallElapsedRecord));
 		while (record)
 		{
 			record->DumpOut(historyOut);
-			record = (ThreadCallElapsedRecord*)InterlockedPopEntrySList(&GThreadCallElapsedRecord);
+			record = reinterpret_cast<ThreadCallElapsedRecord*>(InterlockedPopEntrySList(&GThreadCallElapsedRecord));
 		}
 		
 		/// 콜스택도 남기고
 		historyOut << "========== Exception Call Stack ==========" << std::endl << std::endl;
-		StackWalker stackWalker = StackWalker( myProcessId, OpenProcess( PROCESS_ALL_ACCESS, TRUE, myProcessId) );
+		auto stackWalker = StackWalker( myProcessId, OpenProcess( PROCESS_ALL_ACCESS, TRUE, myProcessId) );
 		stackWalker.LoadModules();
 		stackWalker.SetOutputStream(&historyOut);
 		stackWalker.ShowCallstack();

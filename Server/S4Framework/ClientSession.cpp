@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "ClientSession.h"
 #include "ClientSessionManager.h"
 #include "Exception.h"
@@ -6,9 +6,6 @@
 
 namespace S4Framework
 {
-	ClientSession::~ClientSession()
-	{}
-
 	void ClientSession::AcceptComplete()
 	{
 		if( 1 == InterlockedExchange( &mConnected, 1 ) )
@@ -21,7 +18,7 @@ namespace S4Framework
 
 	void ClientSession::OnDisconnect( DisconnectReason dr )
 	{
-		// std::cout << "Å¬¶óÀÌ¾ðÆ® Á¢¼Ó ÇØÁ¦! (" << dr << ")" << std::endl;
+		// std::cout << "í´ë¼ì´ì–¸íŠ¸ ì ‘ì† í•´ì œ! (" << dr << ")" << std::endl;
 	}
 
 	void ClientSession::OnRelease()

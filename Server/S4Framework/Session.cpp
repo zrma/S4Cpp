@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 
 #include <boost/asio/streambuf.hpp>
 
@@ -15,11 +15,11 @@ namespace S4Framework
 
 	/**
 	 * \brief Session
-	 * \param sessionID SessionID
+	 * \param sessionId SessionID
 	 * \param dispatcher Boost io_service
 	 */
-	Session::Session(int sessionID, boost::asio::io_service& dispatcher)
-		: mSendPendingCount(0), mBufferOffset(0), mSessionID(sessionID)
+	Session::Session(const std::size_t sessionId, boost::asio::io_service& dispatcher)
+		: mSendPendingCount(0), mBufferOffset(0), mSessionID(sessionId)
 		, mSocket(dispatcher)
 		, mDispatcher(dispatcher)
 		, mSendSyncWrapper(dispatcher)
@@ -51,20 +51,20 @@ namespace S4Framework
 		}
 	}
 
-	void Session::PostRecv()
+	void Session::PostReceive()
 	{
 		if( !IsConnected() )
 		{
 			return;
 		}
 
-		// TASK - ÀÓ½Ã
+		// TASK - ìž„ì‹œ
 		AddRefCount();
 
-		boost::asio::streambuf::mutable_buffers_type bufs = mRecvDataBuffer.prepare( MAX_BUF_SIZE );
+		const auto buffers = mRecvDataBuffer.prepare( MAX_BUF_SIZE );
 
 		mSocket.async_read_some(
-			bufs,
+			buffers,
 			boost::bind( &Session::RecvComplete, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred )
 		);
 	}
@@ -76,7 +76,7 @@ namespace S4Framework
 			return;
 		}
 
-		auto f = [ = ]()
+		const auto f = [ = ]()
 		{
 			std::ostream os( &mSendDataBuffer );
 			os.write( pData, nSize );
@@ -95,31 +95,31 @@ namespace S4Framework
 			return;
 		}
 
-		auto f = [ = ]()
+		const auto f = [ = ]()
 		{
-			// º¸³¾ µ¥ÀÌÅÍ°¡ ¾øÀ» °æ¿ì
+			// ë³´ë‚¼ ë°ì´í„°ê°€ ì—†ì„ ê²½ìš°
 			if( mSendDataBuffer.size() == 0 )
 			{
-				// º¸³Â´ø µ¥ÀÌÅÍµµ ¾ø´Â °æ¿ì
+				// ë³´ëƒˆë˜ ë°ì´í„°ë„ ì—†ëŠ” ê²½ìš°
 				if( 0 == mSendPendingCount )
 				{
 					return;
 				}
 
-				// Àç½Ãµµ ´ë»ó¸¸ º°µµ ¼öÁý
+				// ìž¬ì‹œë„ ëŒ€ìƒë§Œ ë³„ë„ ìˆ˜ì§‘
 				LSendRequestFailedSessionList->push_back( this );
 				return;
 			}
 
-			// ÀÌÀüÀÇ send°¡ ¿Ï·á ¾È µÈ °æ¿ì
+			// ì´ì „ì˜ sendê°€ ì™„ë£Œ ì•ˆ ëœ ê²½ìš°
 			if( mSendPendingCount > 0 )
 			{
-				// Àç½Ãµµ ´ë»ó¸¸ º°µµ ¼öÁý
+				// ìž¬ì‹œë„ ëŒ€ìƒë§Œ ë³„ë„ ìˆ˜ì§‘
 				LSendRequestFailedSessionList->push_back( this );
 				return;
 			}
 
-			// TASK - ÀÓ½Ã
+			// TASK - ìž„ì‹œ
 			AddRefCount();
 
 			++mSendPendingCount;
@@ -177,14 +177,14 @@ namespace S4Framework
 
 	void Session::RecvComplete( const boost::system::error_code& error, size_t bytes_transferred )
 	{
-		// TASK - ÀÓ½Ã
+		// TASK - ìž„ì‹œ
 		SubRefCount();
 
 		if( error )
 		{
 			if( error == boost::asio::error::eof )
 			{
-				// BOOST_LOG_TRIVIAL(info) << "Å¬¶óÀÌ¾ðÆ® ¿¬°á Á¾·á";
+				// BOOST_LOG_TRIVIAL(info) << "í´ë¼ì´ì–¸íŠ¸ ì—°ê²° ì¢…ë£Œ";
 
 				Disconnect( DR_ONCONNECT_ERROR );
 			}
@@ -218,20 +218,20 @@ namespace S4Framework
 			// mRecvDataBuffer.consume(size);
 			// trace(boost::str(boost::format("Still on buffer %d bytes") % _read_buf.size()));
 
-			PostRecv();
+			PostReceive();
 		}
 	}
 
 	void Session::SendComplete( const boost::system::error_code& error, size_t bytes_transferred )
 	{
-		// TASK - ÀÓ½Ã
+		// TASK - ìž„ì‹œ
 		SubRefCount();
 
 		if( error )
 		{
 			if( error == boost::asio::error::eof )
 			{
-				// BOOST_LOG_TRIVIAL(info) << "Å¬¶óÀÌ¾ðÆ® ¿¬°á Á¾·á";
+				// BOOST_LOG_TRIVIAL(info) << "í´ë¼ì´ì–¸íŠ¸ ì—°ê²° ì¢…ë£Œ";
 
 				Disconnect( DR_ONCONNECT_ERROR );
 			}

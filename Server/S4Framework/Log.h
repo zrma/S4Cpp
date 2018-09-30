@@ -1,4 +1,4 @@
-#pragma once
+Ôªø#pragma once
 
 #include <iostream>
 #include <boost/log/trivial.hpp>
@@ -10,17 +10,15 @@ namespace S4Framework
 	class ThreadCallHistory : SLIST_ENTRY
 	{
 	public:
-		ThreadCallHistory(int tid) : mThreadId(tid)
+		explicit ThreadCallHistory(const int threadId) : mThreadId(threadId), mHistory{nullptr}
+		{}
+
+		inline void Append(const char* funcSig)
 		{
-			memset(mHistory, 0, sizeof(mHistory));
+			mHistory[mCounter++ % MAX_HISTORY] = funcSig;
 		}
 
-		inline void Append(const char* funsig)
-		{
-			mHistory[mCounter++ % MAX_HISTORY] = funsig;
-		}
-
-		void DumpOut(std::ostream& ost = std::cout);
+		void DumpOut(std::ostream& ost = std::cout) const;
 
 	private:
 		enum
@@ -36,15 +34,12 @@ namespace S4Framework
 	class ThreadCallElapsedRecord : SLIST_ENTRY
 	{
 	public:
-		ThreadCallElapsedRecord(int tid) : mThreadId(tid)
-		{
-			memset(mElapsedFuncSig, 0, sizeof(mElapsedFuncSig));
-			memset(mElapsedTime, 0, sizeof(mElapsedTime));
-		}
+		explicit ThreadCallElapsedRecord(const int tid) : mThreadId(tid)
+		{}
 
-		inline void Append(const char* funcsig, int64_t elapsed)
+		inline void Append(const char* funSig, int64_t elapsed)
 		{
-			mElapsedFuncSig[mCounter % MAX_ELAPSED_RECORD] = funcsig;
+			mElapsedFuncSig[mCounter % MAX_ELAPSED_RECORD] = funSig;
 			mElapsedTime[mCounter % MAX_ELAPSED_RECORD] = elapsed;
 			++mCounter;
 		}
@@ -59,21 +54,22 @@ namespace S4Framework
 
 		uint64_t	mCounter = 0;
 		int			mThreadId = -1;
-		const char*	mElapsedFuncSig[MAX_ELAPSED_RECORD];
-		int64_t		mElapsedTime[MAX_ELAPSED_RECORD];
+		const char*	mElapsedFuncSig[MAX_ELAPSED_RECORD]{nullptr};
+		int64_t		mElapsedTime[MAX_ELAPSED_RECORD]{0};
 	};
 
 	class ScopeElapsedCheck
 	{
 	public:
-		ScopeElapsedCheck(const char* funcsig) : mFuncSig(funcsig)
+		explicit ScopeElapsedCheck(const char* funcSig) : mFuncSig(funcSig)
 		{
 			/* FYI
-			* 10~16 ms «ÿªÛµµ∑Œ √º≈©«œ∑¡∏È GetTickCount ªÁøÎ
-			* 1 us «ÿªÛµµ∑Œ √º≈©«œ∑¡∏È  QueryPerformanceCounter ªÁøÎ
+			* 10~16 ms Ìï¥ÏÉÅÎèÑÎ°ú Ï≤¥ÌÅ¨ÌïòÎ†§Î©¥ GetTickCount ÏÇ¨Ïö©
+			* 1 us Ìï¥ÏÉÅÎèÑÎ°ú Ï≤¥ÌÅ¨ÌïòÎ†§Î©¥  QueryPerformanceCounter ÏÇ¨Ïö©
 			*/
 			mStartTick = GetTickCount64();
 		}
+		ScopeElapsedCheck() = delete;
 
 		~ScopeElapsedCheck();
 		
@@ -85,23 +81,23 @@ namespace S4Framework
 
 	struct LogEvent
 	{
-		int mThreadId = -1;
-		int	mAdditionalInfo = 0;
-		const char* mMessage = nullptr;
+		int ThreadId = -1;
+		int	AdditionalInfo = 0;
+		const char* Message = nullptr;
 	};
 
-#define MAX_LOG_SIZE  65536   ///< Must be a power of 2
+	constexpr auto MAX_LOG_SIZE = 65536;   ///< Must be a power of 2
 
-	extern LogEvent gLogEvents[MAX_LOG_SIZE];
-	extern __int64 gCurrentLogIndex;
+	extern LogEvent GLogEvents[MAX_LOG_SIZE];
+	extern __int64 GCurrentLogIndex;
 
 	inline void EventLog(const char* msg, int info)
 	{
-		__int64 index = _InterlockedIncrement64(&gCurrentLogIndex) - 1;
-		LogEvent& event = gLogEvents[index & (MAX_LOG_SIZE - 1)];
-		event.mThreadId = LThreadId;
-		event.mMessage = msg;
-		event.mAdditionalInfo = info;
+		const auto index = _InterlockedIncrement64(&GCurrentLogIndex) - 1;
+		auto& event = GLogEvents[index & (MAX_LOG_SIZE - 1)];
+		event.ThreadId = LThreadId;
+		event.Message = msg;
+		event.AdditionalInfo = info;
 	}
 
 	void EventLogDumpOut(std::ostream& ost = std::cout);
